@@ -1,0 +1,6 @@
+{
+  "name": "Cockroach Janta Party Store",
+  "description": "An e-commerce store and admin dashboard for Cockroach Janta Party merchandise.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

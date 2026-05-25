@@ -1,0 +1,50 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Reuseable validation helpers
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidProduct(data) {
+      return data.keys().hasAll(['id', 'name', 'category', 'price', 'description', 'imageUrl', 'createdAt'])
+        && data.id is string && data.id.size() <= 128
+        && data.name is string && data.name.size() > 0 && data.name.size() <= 200
+        && data.category in ['t-shirt', 'mobile-cover', 'other']
+        && data.price is number && data.price >= 0
+        && (!data.keys().hasAny(['tShirtPrices']) || data.tShirtPrices is map)
+        && data.description is string && data.description.size() <= 5000
+        && data.imageUrl is string
+        && data.createdAt is number;
+    }
+
+    function isValidOrder(data) {
+      return data.keys().hasAll(['id', 'items', 'total', 'customerInfo', 'date', 'status'])
+        && data.id is string && data.id.size() <= 128
+        && data.items is list && data.items.size() <= 100
+        && data.total is number && data.total >= 0
+        && data.customerInfo is map
+        && data.customerInfo.keys().hasAll(['name', 'phone', 'whatsapp', 'address', 'pincode', 'paymentMethod'])
+        && data.date is number
+        && data.status in ['pending', 'shipped', 'delivered'];
+    }
+
+    match /products/{productId} {
+      allow read: if true;
+      allow create, update: if isValidId(productId) && isValidProduct(request.resource.data);
+      allow delete: if true;
+    }
+
+    match /orders/{orderId} {
+      allow read: if true;
+      allow create, update: if isValidId(orderId) && isValidOrder(request.resource.data);
+      allow delete: if true;
+    }
+  }
+}

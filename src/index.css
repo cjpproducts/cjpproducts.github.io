@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Anton", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  
+  --color-cjp-dark: #1a1a1a;
+  --color-cjp-accent: #ff4500;
+  --color-cjp-light: #f5f5f0;
+}
+
+body {
+  background-color: var(--color-cjp-light);
+  color: var(--color-cjp-dark);
+}

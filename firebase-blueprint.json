@@ -1,0 +1,75 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "Merchandise items of the Cockroach Janta Party.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique identifier of the product."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the product."
+        },
+        "price": {
+          "type": "number",
+          "description": "The price of the product in INR."
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description of the product."
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "Image URL of the product representation."
+        },
+        "createdAt": {
+          "type": "number",
+          "description": "Timestamp when this product was published."
+        }
+      },
+      "required": ["id", "name", "price", "description", "imageUrl", "createdAt"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Purchase order of merchandise placed by citizens around the world.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique identifier of the order."
+        },
+        "items": {
+          "type": "array",
+          "description": "List of items in this order."
+        },
+        "total": {
+          "type": "number",
+          "description": "Total checkout tax for these rations."
+        },
+        "date": {
+          "type": "number",
+          "description": "Timestamp when the order was placed."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "shipped", "delivered"],
+          "description": "Current status of order delivery."
+        }
+      },
+      "required": ["id", "items", "total", "date", "status"]
+    }
+  },
+  "firestore": {
+    "products/{productId}": {
+      "schema": "Product",
+      "description": "Collection of all public Cockroach Janta Party merchandise."
+    },
+    "orders/{orderId}": {
+      "schema": "Order",
+      "description": "Collection of all received orders from users around the world."
+    }
+  }
+}

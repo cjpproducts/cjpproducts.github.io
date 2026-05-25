@@ -1,0 +1,617 @@
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { ImagePlus, PackagePlus, AlertOctagon, Trash2, Download, ClipboardList, CheckCircle2, Clock, Truck, Upload } from "lucide-react";
+import { useShop } from "../context/ShopContext";
+import { formatPrice } from "../lib/utils";
+
+export function Admin() {
+  const { products, addProduct, removeProduct, orders, updateOrderStatus, deleteOrder } = useShop();
+  const [activeTab, setActiveTab] = useState<"inventory" | "orders">("orders");
+  
+  const [name, setName] = useState("");
+  const [category, setCategory] = useState<import("../types").ProductCategory>("other");
+  const [price, setPrice] = useState("");
+  const [tShirtPrices, setTShirtPrices] = useState<Partial<Record<import("../types").Size, number>>>({});
+  const [description, setDescription] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [dragActive, setDragActive] = useState(false);
+
+  // Authentication System
+  const [password, setPassword] = useState("");
+  const [authError, setAuthError] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return localStorage.getItem("cjp_admin_auth") === "true";
+  });
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password === "priyamkesh8825") {
+      setIsAuthenticated(true);
+      localStorage.setItem("cjp_admin_auth", "true");
+      setAuthError("");
+    } else {
+      setAuthError("INCORRECT SECURITY ACCESS CODE. THE PARTY IS WATCHING.");
+    }
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    localStorage.removeItem("cjp_admin_auth");
+    setPassword("");
+  };
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name || !price || !description) return;
+
+    setIsSubmitting(true);
+    setSubmitError("");
+    setSubmitSuccess(false);
+
+    try {
+      await addProduct({
+        name,
+        category,
+        price: category === "t-shirt" && Object.entries(tShirtPrices).length > 0 
+          ? Math.min(...Object.values(tShirtPrices).filter(v => v !== undefined) as number[]) 
+          : Number(price),
+        ...(category === "t-shirt" ? { tShirtPrices } : {}),
+        description,
+        imageUrl: imageUrl || "https://images.unsplash.com/photo-1572375992501-4b0892d50c69?q=80&w=800&auto=format&fit=crop",
+      });
+
+      setName("");
+      setCategory("other");
+      setPrice("");
+      setTShirtPrices({});
+      setDescription("");
+      setImageUrl("");
+      setSubmitSuccess(true);
+      // clear success banner after a few seconds
+      setTimeout(() => setSubmitSuccess(false), 5000);
+    } catch (err: any) {
+      console.error("Publishing failed:", err);
+      try {
+        const parsed = JSON.parse(err.message);
+        setSubmitError(parsed.error || "Failed to publish product.");
+      } catch {
+        setSubmitError(err.message || "Unknown publishing error occurred.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleImageFile = (file: File) => {
+    if (!file.type.startsWith("image/")) {
+      alert("Please upload an image file (PNG, JPG, WEBP, GIF etc.)");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      if (event.target?.result) {
+        const img = new Image();
+        img.src = event.target.result as string;
+        img.onload = () => {
+          const MAX_WIDTH = 500;
+          const MAX_HEIGHT = 500;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, width, height);
+            const compressedUrl = canvas.toDataURL("image/jpeg", 0.7);
+            setImageUrl(compressedUrl);
+          } else {
+            setImageUrl(event.target.result as string);
+          }
+        };
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleImageFile(e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      handleImageFile(e.target.files[0]);
+    }
+  };
+
+  const handleExportJSON = () => {
+    const dataStr = JSON.stringify(products, null, 2);
+    const dataUri = "data:application/json;charset=utf-8," + encodeURIComponent(dataStr);
+    const exportFileDefaultName = `cjp_inventory_${new Date().toISOString().split('T')[0]}.json`;
+    const linkElement = document.createElement("a");
+    linkElement.setAttribute("href", dataUri);
+    linkElement.setAttribute("download", exportFileDefaultName);
+    linkElement.click();
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-[calc(100vh-80px)] flex flex-col items-center justify-center bg-cjp-light px-4 py-12">
+        <div className="w-full max-w-md bg-white border-4 border-cjp-dark p-8 shadow-[12px_12px_0px_#ff4500] text-center">
+          <div className="bg-red-600 text-white p-4 inline-block shadow-[4px_4px_0px_#1a1a1a] rotate-[-3deg] mb-6">
+            <AlertOctagon size={48} className="animate-pulse" />
+          </div>
+          
+          <h1 className="font-display text-4xl uppercase tracking-tight mb-2">War Room Lockout</h1>
+          <p className="text-gray-600 font-bold uppercase text-xs tracking-wider mb-8">
+            Access to CJP Party Headquarters is restricted. <br />Comply with security checks.
+          </p>
+          
+          <form onSubmit={handleLogin} className="space-y-6 text-left">
+            <div className="space-y-2">
+              <label className="font-bold uppercase text-xs tracking-wider text-gray-700 block">
+                Enter Secret Access Code
+              </label>
+              <input 
+                type="password" 
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setAuthError("");
+                }}
+                required
+                className="w-full border-4 border-cjp-dark bg-cjp-light px-4 py-3 font-mono font-bold focus:outline-none focus:ring-4 focus:ring-cjp-accent text-center text-lg shadow-[4px_4px_0px_#1a1a1a]"
+                placeholder="••••••••••••"
+              />
+            </div>
+
+            {authError && (
+              <div className="border-2 border-red-600 bg-red-50 text-red-700 font-bold uppercase text-xs p-3 text-center">
+                {authError}
+              </div>
+            )}
+
+            <button 
+              type="submit"
+              className="w-full bg-cjp-dark text-white font-display uppercase text-2xl py-4 hover:bg-cjp-accent transition-colors shadow-[6px_6px_0px_#ff4500] active:translate-y-1 active:translate-x-1 active:shadow-none cursor-pointer"
+            >
+              Verify Authority
+            </button>
+          </form>
+
+          <div className="mt-8 pt-4 border-t-2 border-dashed border-gray-200">
+            <Link to="/" className="text-sm font-bold uppercase text-gray-500 hover:text-cjp-accent transition-colors">
+              ← Return to Public Store
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container mx-auto px-4 py-12 max-w-6xl">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 border-b-4 border-cjp-dark pb-6">
+        <div className="flex items-center gap-4">
+          <div className="bg-red-600 text-white p-3 shadow-[4px_4px_0px_#1a1a1a]">
+            <AlertOctagon size={40} />
+          </div>
+          <div>
+            <h1 className="font-display text-4xl uppercase tracking-tight">Party War Room</h1>
+            <div className="flex items-center gap-3 mt-1">
+              <span className="text-gray-600 font-bold uppercase text-xs">Authorized Personnel Only</span>
+              <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-ping"></span>
+              <span className="text-xs text-green-700 font-bold uppercase">Terminal Online</span>
+            </div>
+          </div>
+        </div>
+        
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex border-2 border-cjp-dark bg-gray-200 p-1">
+            <button
+              onClick={() => setActiveTab("orders")}
+              className={`px-6 py-2 font-bold uppercase text-xs cursor-pointer transition-colors ${
+                activeTab === "orders" ? "bg-cjp-dark text-white" : "hover:bg-gray-300 text-gray-700"
+              }`}
+            >
+              Manage Orders
+            </button>
+            <button
+              onClick={() => setActiveTab("inventory")}
+              className={`px-6 py-2 font-bold uppercase text-xs cursor-pointer transition-colors ${
+                activeTab === "inventory" ? "bg-cjp-dark text-white" : "hover:bg-gray-300 text-gray-700"
+              }`}
+            >
+              Inventory Control
+            </button>
+          </div>
+          
+          <button
+            onClick={handleLogout}
+            className="bg-red-600 text-white border-2 border-cjp-dark font-bold uppercase px-4 py-2 text-xs shadow-[2px_2px_0px_#000] hover:bg-cjp-dark hover:text-white transition-colors cursor-pointer"
+          >
+            Secure Lockout
+          </button>
+        </div>
+      </div>
+
+      {activeTab === "inventory" && (
+        <div className="grid md:grid-cols-2 gap-12">
+          {/* ADD PRODUCT FORM */}
+        <div className="bg-white border-4 border-cjp-dark p-6 shadow-[8px_8px_0px_#ff4500]">
+          <h2 className="font-display text-3xl uppercase mb-6 flex items-center gap-2 border-b-2 border-dashed border-gray-300 pb-3">
+            <PackagePlus /> Issue New Ration
+          </h2>
+          
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="space-y-1">
+              <label className="font-bold uppercase text-sm block">Designation (Product Name)</label>
+              <input 
+                type="text" 
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                className="w-full border-2 border-cjp-dark bg-cjp-light px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cjp-accent"
+                placeholder="e.g. Resistance Banner"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="font-bold uppercase text-sm block">Category</label>
+              <select 
+                value={category}
+                onChange={(e) => setCategory(e.target.value as import("../types").ProductCategory)}
+                className="w-full border-2 border-cjp-dark bg-cjp-light px-4 py-3 font-bold uppercase focus:outline-none focus:ring-2 focus:ring-cjp-accent cursor-pointer"
+              >
+                <option value="other">Other Merchandise</option>
+                <option value="t-shirt">T-Shirt (Sized)</option>
+                <option value="mobile-cover">Mobile Cover</option>
+              </select>
+            </div>
+            
+            {category === "t-shirt" ? (
+              <div className="space-y-2 border-2 border-dashed border-gray-300 p-4">
+                <label className="font-bold uppercase text-sm block mb-2">Pricing by Size (INR)</label>
+                {(["S", "M", "L", "XL", "XXL"] as import("../types").Size[]).map((size) => (
+                  <div key={size} className="flex items-center gap-4">
+                    <span className="font-bold text-gray-700 w-8">{size}:</span>
+                    <input 
+                      type="number"
+                      value={tShirtPrices[size] || ""}
+                      onChange={(e) => setTShirtPrices(prev => ({ ...prev, [size]: e.target.value ? Number(e.target.value) : undefined }))}
+                      min="0"
+                      className="flex-1 border-2 border-cjp-dark bg-cjp-light px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cjp-accent"
+                      placeholder={`Price for ${size}`}
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-1">
+                <label className="font-bold uppercase text-sm block">Contribution Amount (Base Price INR)</label>
+                <input 
+                  type="number" 
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  required
+                  min="0"
+                  step="1"
+                  className="w-full border-2 border-cjp-dark bg-cjp-light px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cjp-accent"
+                  placeholder="e.g. 500"
+                />
+              </div>
+            )}
+            
+            <div className="space-y-1">
+              <label className="font-bold uppercase text-sm block">Visual Propaganda (Image Upload)</label>
+              
+              {/* Drag and Drop Zone */}
+              <div 
+                onDragEnter={handleDrag}
+                onDragOver={handleDrag}
+                onDragLeave={handleDrag}
+                onDrop={handleDrop}
+                className={`relative border-2 border-dashed ${
+                  dragActive ? "border-cjp-accent bg-amber-50" : "border-cjp-dark bg-cjp-light"
+                } p-6 text-center transition-all flex flex-col items-center justify-center min-h-[160px] group cursor-pointer hover:border-cjp-accent`}
+                onClick={() => document.getElementById("file-upload")?.click()}
+              >
+                <input 
+                  id="file-upload"
+                  type="file" 
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+                
+                {imageUrl ? (
+                  <div className="space-y-3 w-full flex flex-col items-center" onClick={(e) => e.stopPropagation()}>
+                    <img 
+                      src={imageUrl} 
+                      alt="Preview" 
+                      className="max-h-32 object-contain border-2 border-cjp-dark shadow-[4px_4px_0px_#1a1a1a]"
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setImageUrl("")}
+                        className="bg-red-600 text-white font-bold text-xs uppercase px-3 py-1.5 shadow-[2px_2px_0px_#000] hover:bg-red-700 transition-colors cursor-pointer"
+                      >
+                        Remove Image
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => document.getElementById("file-upload")?.click()}
+                        className="bg-cjp-dark text-white font-bold text-xs uppercase px-3 py-1.5 shadow-[2px_2px_0px_#ff4500] hover:bg-cjp-accent transition-colors cursor-pointer"
+                      >
+                        Change Image
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center space-y-2 pointer-events-none">
+                    <Upload className="text-gray-500 group-hover:text-cjp-accent transition-colors" size={32} />
+                    <p className="font-bold text-sm uppercase">Drag & Drop Image or Click to Browse</p>
+                    <p className="text-xs text-gray-500">Supports PNG, JPG, GIF, WEBP</p>
+                  </div>
+                )}
+              </div>
+
+              {/* URL fallback */}
+              <div className="pt-2">
+                <span className="text-xs font-bold text-gray-500 uppercase">Or provide a web URL manually:</span>
+                <div className="relative mt-1">
+                  <ImagePlus className="absolute left-3 top-3.5 text-gray-400" size={20} />
+                  <input 
+                    type="url" 
+                    value={imageUrl.startsWith("data:") ? "" : imageUrl}
+                    onChange={(e) => setImageUrl(e.target.value)}
+                    className="w-full border-2 border-cjp-dark bg-cjp-light pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-cjp-accent text-sm"
+                    placeholder="https://..."
+                  />
+                  {imageUrl.startsWith("data:") && (
+                    <span className="absolute right-3 top-2.5 text-xs bg-green-100 text-green-800 font-bold px-2 py-1 border border-green-500">
+                      Uploaded File Active
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="font-bold uppercase text-sm block">Manifesto (Description)</label>
+              <textarea 
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                required
+                rows={4}
+                className="w-full border-2 border-cjp-dark bg-cjp-light px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cjp-accent resize-none"
+                placeholder="Describe the utility of this item in the revolution..."
+              />
+            </div>
+
+            {submitSuccess && (
+              <div className="border-4 border-green-500 bg-green-50 text-green-800 p-4 font-bold uppercase text-xs flex flex-col gap-1 items-center justify-center animate-bounce shadow-[4px_4px_0px_#10b981]">
+                <span>✓ Propaganda Published Successfully!</span>
+                <span className="text-[10px] text-green-600">The masses can now view and purchase this ration all over the world.</span>
+              </div>
+            )}
+
+            {submitError && (
+              <div className="border-4 border-red-500 bg-red-50 text-red-800 p-4 font-bold uppercase text-xs text-center shadow-[4px_4px_0px_#ef4444]">
+                ⚠ Blocked: {submitError}
+              </div>
+            )}
+
+            <button 
+              type="submit"
+              disabled={isSubmitting}
+              className={`w-full font-display uppercase text-2xl py-4 transition-all shadow-[4px_4px_0px_#000] active:translate-y-1 active:translate-x-1 active:shadow-none cursor-pointer flex items-center justify-center gap-2 ${
+                isSubmitting 
+                  ? "bg-gray-400 text-gray-700 cursor-not-allowed shadow-none translate-y-1 translate-x-1" 
+                  : "bg-cjp-dark text-white hover:bg-cjp-accent"
+              }`}
+            >
+              {isSubmitting ? (
+                <>
+                  <span className="h-5 w-5 border-4 border-white border-t-transparent rounded-full animate-spin"></span>
+                  Publishing...
+                </>
+              ) : (
+                "Publish to Masses"
+              )}
+            </button>
+          </form>
+        </div>
+
+        {/* INVENTORY LIST */}
+        <div className="space-y-6">
+          <div className="flex items-center justify-between border-b-4 border-cjp-dark pb-3">
+            <h2 className="font-display text-3xl uppercase flex items-center gap-2">
+              Current Inventory ({products.length})
+            </h2>
+            <button
+              onClick={handleExportJSON}
+              className="flex items-center gap-2 bg-gray-200 hover:bg-gray-300 border-2 border-cjp-dark font-bold uppercase px-3 py-2 text-sm transition-colors shadow-[2px_2px_0px_#1a1a1a] active:translate-y-0.5 active:translate-x-0.5 active:shadow-none"
+            >
+              <Download size={18} />
+              Export JSON
+            </button>
+          </div>
+          
+          <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+            {products.length === 0 ? (
+              <p className="text-gray-500 italic p-4 text-center border-2 border-dashed border-gray-400">Inventory depleted. Restock immediately.</p>
+            ) : (
+              products.map((product) => (
+                <div key={product.id} className="flex gap-4 bg-white border-2 border-cjp-dark p-3">
+                  <img 
+                    src={product.imageUrl} 
+                    alt={product.name}
+                    className="w-20 h-20 object-cover border border-gray-300"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=800&auto=format&fit=crop";
+                    }}
+                  />
+                  <div className="flex-1 flex flex-col justify-center">
+                    <h3 className="font-bold uppercase leading-tight line-clamp-1">{product.name}</h3>
+                    <p className="text-cjp-accent font-display text-xl">{formatPrice(product.price)}</p>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      if (window.confirm("Discontinue this item?")) {
+                        removeProduct(product.id);
+                      }
+                    }}
+                    className="p-3 bg-gray-100 border-2 border-transparent hover:border-cjp-dark hover:bg-red-50 text-gray-500 hover:text-red-600 transition-all cursor-pointer flex flex-col justify-center h-full self-center ml-2"
+                  >
+                    <Trash2 size={24} />
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+        </div>
+      )}
+
+      {activeTab === "orders" && (
+        <div className="bg-white border-4 border-cjp-dark p-6 shadow-[8px_8px_0px_#ff4500]">
+          <h2 className="font-display text-3xl uppercase mb-6 flex items-center gap-3 border-b-2 border-dashed border-gray-300 pb-3">
+            <ClipboardList /> Received Orders
+          </h2>
+          
+          <div className="space-y-6">
+            {orders.length === 0 ? (
+              <div className="text-center py-10 opacity-60">
+                <ClipboardList size={48} className="mx-auto mb-4" />
+                <p className="font-display text-2xl uppercase">No orders received yet.</p>
+                <p className="font-bold text-gray-500">Wait for the citizens to comply.</p>
+              </div>
+            ) : (
+              orders.map((order) => (
+                <div key={order.id} className="border-2 border-cjp-dark p-4 flex flex-col md:flex-row gap-6">
+                  <div className="flex-1 space-y-3">
+                    <div className="flex items-center gap-3">
+                      <h3 className="font-display text-2xl bg-cjp-dark text-white px-3 py-1 uppercase">{order.id}</h3>
+                      <span className="text-sm font-bold text-gray-500">
+                        {new Date(order.date).toLocaleString()}
+                      </span>
+                    </div>
+                    
+                    <div className="bg-gray-100 p-3 text-sm font-bold border border-gray-300">
+                      <p className="text-cjp-dark uppercase mb-1">Citizen Record:</p>
+                      <ul className="text-gray-700">
+                        <li>Name: {order.customerInfo?.name || "Unknown"}</li>
+                        <li>Phone: {order.customerInfo?.phone || "Unknown"}</li>
+                        {order.customerInfo?.whatsapp && <li>WhatsApp: {order.customerInfo.whatsapp}</li>}
+                        <li>Address: {order.customerInfo?.address || "Unknown"}</li>
+                        <li>PIN: {order.customerInfo?.pincode || "Unknown"}</li>
+                        <li className="uppercase mt-1 text-cjp-accent border-t mt-2 pt-1 border-gray-300">
+                          Payment: {order.customerInfo?.paymentMethod === 'cod' ? 'Cash On Delivery' : 'Prepaid'}
+                        </li>
+                        <li className={`uppercase mt-1 text-xs border-t pt-1 border-gray-300 ${order.customerInfo?.easyReturnEnabled ? 'text-green-600' : 'text-gray-400'}`}>
+                          Easy Return/Exchange: {order.customerInfo?.easyReturnEnabled ? 'ENABLED (+29 RS)' : 'DISABLED'}
+                        </li>
+                      </ul>
+                    </div>
+
+                    <ul className="space-y-1 pl-4 border-l-4 border-gray-200">
+                      {order.items.map((item, idx) => (
+                        <li key={idx} className="font-bold uppercase text-sm">
+                          {item.quantity}x {item.name} 
+                          {item.selectedSize && <span className="ml-1 text-xs text-gray-500">[Size: {item.selectedSize}]</span>}
+                          {item.smartphoneModel && <span className="ml-1 text-xs text-gray-500">[Model: {item.smartphoneModel}]</span>}
+                          <span className="text-gray-500 ml-1">({formatPrice(item.cartPrice)})</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="font-display text-xl pt-2 flex justify-between items-end">
+                      <div>Total: <span className="text-cjp-accent">{formatPrice(order.total)}</span></div>
+                      <button 
+                        onClick={() => {
+                          if (window.confirm("Delete this order permanently to free up storage space?")) {
+                            deleteOrder(order.id);
+                          }
+                        }}
+                        className="flex items-center gap-2 px-3 py-1 bg-red-50 text-red-600 border border-red-200 hover:bg-red-600 hover:text-white transition-colors text-xs uppercase font-bold"
+                      >
+                        <Trash2 size={14} /> Delete Order
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-col gap-2 min-w-[200px] border-t-2 md:border-t-0 md:border-l-2 border-dashed border-gray-300 pt-4 md:pt-0 md:pl-6">
+                    <p className="font-bold uppercase text-sm text-gray-500 mb-1">Fulfillment Status</p>
+                    <button 
+                      onClick={() => updateOrderStatus(order.id, 'pending')}
+                      className={`flex items-center gap-2 p-2 font-bold uppercase text-sm border-2 transition-colors ${
+                        order.status === 'pending' 
+                          ? 'bg-yellow-100 border-yellow-500 text-yellow-800' 
+                          : 'border-transparent hover:bg-gray-100'
+                      }`}
+                    >
+                      <Clock size={16} /> Pending
+                    </button>
+                    <button 
+                      onClick={() => updateOrderStatus(order.id, 'shipped')}
+                      className={`flex items-center gap-2 p-2 font-bold uppercase text-sm border-2 transition-colors ${
+                        order.status === 'shipped' 
+                          ? 'bg-blue-100 border-blue-500 text-blue-800' 
+                          : 'border-transparent hover:bg-gray-100'
+                      }`}
+                    >
+                      <Truck size={16} /> Shipped
+                    </button>
+                    <button 
+                      onClick={() => updateOrderStatus(order.id, 'delivered')}
+                      className={`flex items-center gap-2 p-2 font-bold uppercase text-sm border-2 transition-colors ${
+                        order.status === 'delivered' 
+                          ? 'bg-green-100 border-green-500 text-green-800' 
+                          : 'border-transparent hover:bg-gray-100'
+                      }`}
+                    >
+                      <CheckCircle2 size={16} /> Delivered
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
