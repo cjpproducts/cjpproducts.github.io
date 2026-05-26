@@ -287,54 +287,54 @@ export function Admin() {
               <h2 className="text-xl font-bold uppercase mb-4 border-b-2 border-dashed border-blue-900 pb-2 flex items-center gap-2">
                 System Stats
               </h2>
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                  <label className="font-bold uppercase text-xs text-blue-600 w-32">Total Products Sold:</label>
-                  <div className="flex items-center flex-1 w-full gap-2">
-                    <span className="text-blue-800">[</span>
+              <div className="flex flex-col gap-6 sm:gap-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full">
+                  <label className="font-bold uppercase text-xs text-blue-600 sm:w-32 shrink-0">Total Products Sold:</label>
+                  <div className="flex items-center w-full sm:flex-1 gap-2">
+                    <span className="text-blue-800 shrink-0">[</span>
                     <input
                       type="number"
                       value={localProductsSold}
                       onChange={(e) => setLocalProductsSold(e.target.value)}
                       className="flex-1 min-w-0 bg-transparent border-b border-blue-900 text-blue-400 px-2 py-1 font-bold text-xl focus:outline-none focus:border-blue-600 text-center"
                     />
-                    <span className="text-blue-800">]</span>
+                    <span className="text-blue-800 shrink-0">]</span>
                     <button 
                       onClick={() => {
                         const val = parseInt(localProductsSold) || 0;
                         updateProductsSold(val);
                       }}
-                      className="ml-2 bg-blue-600 text-black font-bold px-3 py-1 text-xs hover:bg-blue-500 active:translate-y-[1px] active:translate-x-[1px] shrink-0"
+                      className="ml-1 sm:ml-2 bg-blue-600 text-black font-bold px-3 py-1 text-xs hover:bg-blue-500 active:translate-y-[1px] active:translate-x-[1px] shrink-0"
                     >
                       UPDATE
                     </button>
                   </div>
                 </div>
                 
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                  <label className="font-bold uppercase text-xs text-blue-600 w-32">Visitors Count:</label>
-                  <div className="flex items-center flex-1 w-full gap-2">
-                    <span className="text-blue-800">[</span>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full">
+                  <label className="font-bold uppercase text-xs text-blue-600 sm:w-32 shrink-0">Visitors Count:</label>
+                  <div className="flex items-center w-full sm:flex-1 gap-2">
+                    <span className="text-blue-800 shrink-0">[</span>
                     <input
                       type="number"
                       value={localVisitorsCount}
                       onChange={(e) => setLocalVisitorsCount(e.target.value)}
                       className="flex-1 min-w-0 bg-transparent border-b border-blue-900 text-blue-400 px-2 py-1 font-bold text-xl focus:outline-none focus:border-blue-600 text-center"
                     />
-                    <span className="text-blue-800">]</span>
+                    <span className="text-blue-800 shrink-0">]</span>
                     <button 
                       onClick={() => {
                         const val = parseInt(localVisitorsCount) || 0;
                         updateVisitorsCount(val);
                       }}
-                      className="ml-2 bg-blue-600 text-black font-bold px-3 py-1 text-xs hover:bg-blue-500 active:translate-y-[1px] active:translate-x-[1px] shrink-0"
+                      className="ml-1 sm:ml-2 bg-blue-600 text-black font-bold px-3 py-1 text-xs hover:bg-blue-500 active:translate-y-[1px] active:translate-x-[1px] shrink-0"
                     >
                       UPDATE
                     </button>
                   </div>
                 </div>
                 
-                <p className="text-[10px] text-blue-700 uppercase mt-2">* Update total sold and visitors counters manually if required.</p>
+                <p className="text-[10px] text-blue-700 uppercase mt-2 break-words w-full">* Update total sold and visitors counters manually if required.</p>
               </div>
             </div>
 
@@ -534,13 +534,13 @@ export function Admin() {
 
         {/* INVENTORY LIST */}
         <div className="space-y-6">
-          <div className="flex items-center justify-between border-b-2 border-dashed border-blue-900 pb-3">
-            <h2 className="font-mono text-xl font-bold uppercase flex items-center gap-2 text-blue-400">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b-2 border-dashed border-blue-900 pb-3">
+            <h2 className="font-mono text-lg sm:text-xl font-bold uppercase flex items-center gap-2 text-blue-400">
               Current Inventory ({products.length})
             </h2>
             <button
               onClick={handleExportJSON}
-              className="flex items-center gap-2 bg-blue-900/50 text-blue-400 hover:text-blue-300 hover:bg-blue-800 border border-blue-800 font-mono font-bold uppercase text-[10px] px-3 py-1.5 transition-colors shadow-[2px_2px_0px_#1e3a8a] active:translate-y-[1px] active:translate-x-[1px] active:shadow-none"
+              className="flex items-center justify-center gap-2 bg-blue-900/50 text-blue-400 hover:text-blue-300 hover:bg-blue-800 border border-blue-800 font-mono font-bold uppercase text-[10px] px-3 py-1.5 transition-colors shadow-[2px_2px_0px_#1e3a8a] active:translate-y-[1px] active:translate-x-[1px] active:shadow-none shrink-0 self-start sm:self-auto"
             >
               <Download size={14} />
               Export JSON
