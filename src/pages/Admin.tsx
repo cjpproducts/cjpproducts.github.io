@@ -232,9 +232,9 @@ export function Admin() {
   }
 
   return (
-    <div className="bg-black min-h-screen w-full w-screen max-w-full overflow-hidden flex flex-col">
-      <div className="w-full max-w-[100vw] mx-auto px-3 sm:px-4 py-6 sm:py-12 md:max-w-6xl overflow-hidden sm:overflow-visible">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 border-b-4 border-blue-900 pb-6 w-full">
+    <div className="bg-black min-h-screen flex flex-col relative w-full overflow-hidden">
+      <div className="w-full mx-auto px-4 py-6 md:py-12 max-w-5xl box-border">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 md:mb-8 border-b-4 border-blue-900 pb-6">
           <div className="flex items-center gap-4">
             <div className="bg-blue-600 text-black p-3 shadow-[4px_4px_0px_#000000] border border-blue-800">
               <AlertOctagon size={40} className="text-black" />
@@ -283,14 +283,14 @@ export function Admin() {
       {activeTab === "inventory" && (
         <div className="grid md:grid-cols-2 gap-12">
           <div className="flex flex-col gap-6">
-            <div className="bg-black text-blue-400 border-2 border-blue-800 p-4 sm:p-6 shadow-[8px_8px_0px_#1e3a8a] font-mono overflow-hidden">
+            <div className="bg-black text-blue-400 border-2 border-blue-800 p-4 sm:p-6 shadow-[4px_4px_0px_#1e3a8a] md:shadow-[8px_8px_0px_#1e3a8a] font-mono overflow-hidden">
               <h2 className="text-xl font-bold uppercase mb-4 border-b-2 border-dashed border-blue-900 pb-2 flex items-center gap-2">
                 System Stats
               </h2>
               <div className="flex flex-col gap-6 sm:gap-4">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full">
                   <label className="font-bold uppercase text-xs text-blue-600 sm:w-32 shrink-0">Total Products Sold:</label>
-                  <div className="flex items-center gap-1.5 sm:gap-2 flex-nowrap">
+                  <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap sm:flex-nowrap">
                     <span className="text-blue-800 shrink-0 text-xl font-bold">[</span>
                     <input
                       type="number"
@@ -313,7 +313,7 @@ export function Admin() {
                 
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full">
                   <label className="font-bold uppercase text-xs text-blue-600 sm:w-32 shrink-0">Visitors Count:</label>
-                  <div className="flex items-center gap-1.5 sm:gap-2 flex-nowrap">
+                  <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap sm:flex-nowrap">
                     <span className="text-blue-800 shrink-0 text-xl font-bold">[</span>
                     <input
                       type="number"
@@ -339,7 +339,7 @@ export function Admin() {
             </div>
 
             {/* ADD PRODUCT FORM */}
-            <div className="bg-black border-2 border-blue-800 p-4 sm:p-6 shadow-[8px_8px_0px_#1e3a8a] text-blue-300 overflow-hidden">
+            <div className="bg-black border-2 border-blue-800 p-4 sm:p-6 shadow-[4px_4px_0px_#1e3a8a] md:shadow-[8px_8px_0px_#1e3a8a] text-blue-300 overflow-hidden">
           <h2 className="text-xl uppercase font-bold mb-6 flex items-center gap-3 border-b-2 border-dashed border-blue-900 pb-3 text-blue-400">
             <PackagePlus /> Add Product
           </h2>
@@ -584,7 +584,7 @@ export function Admin() {
       )}
 
       {activeTab === "orders" && (
-        <div className="bg-black border-2 border-blue-800 p-6 shadow-[8px_8px_0px_#1e3a8a] text-blue-200">
+        <div className="bg-black border-2 border-blue-800 p-4 sm:p-6 shadow-[4px_4px_0px_#1e3a8a] md:shadow-[8px_8px_0px_#1e3a8a] text-blue-200">
           <h2 className="text-2xl font-bold uppercase mb-6 flex items-center gap-3 border-b-2 border-dashed border-blue-900 pb-3 text-blue-400">
             <ClipboardList /> Received Orders
           </h2>
