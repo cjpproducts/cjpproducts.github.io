@@ -18,6 +18,13 @@ export function ProductDetail() {
   const [copiedProduct, setCopiedProduct] = useState(false);
   const [copiedSite, setCopiedSite] = useState(false);
 
+  const pricesObj = product?.tShirtPrices || {};
+  const currentPrice = product 
+    ? (product.category === "t-shirt" && selectedSize && pricesObj[selectedSize] !== undefined 
+      ? pricesObj[selectedSize]! 
+      : product.price)
+    : 0;
+
   useEffect(() => {
     if (products.length > 0 && id) {
       const foundProduct = products.find(p => p.id === id);
@@ -36,6 +43,92 @@ export function ProductDetail() {
     setSmartphoneModel("");
   }, [id, products]);
 
+  // Dynamically inject Google Shopping Product Structured Data for top ranking
+  useEffect(() => {
+    if (product) {
+      const existingScript = document.getElementById("product-schema-ld");
+      if (existingScript) {
+        existingScript.remove();
+      }
+
+      const script = document.createElement("script");
+      script.id = "product-schema-ld";
+      script.type = "application/ld+json";
+      
+      const schemaData = {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": product.name,
+        "image": product.imageUrl || "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=800&auto=format&fit=crop",
+        "description": product.description,
+        "sku": product.id,
+        "mpn": product.id,
+        "brand": {
+          "@type": "Brand",
+          "name": "Cockroach Janta Party"
+        },
+        "offers": {
+          "@type": "Offer",
+          "url": window.location.href,
+          "priceCurrency": "INR",
+          "price": currentPrice.toString(),
+          "priceValidUntil": "2030-12-31",
+          "itemCondition": "https://schema.org/NewCondition",
+          "availability": "https://schema.org/InStock",
+          "seller": {
+            "@type": "Organization",
+            "name": "Cockroach Janta Party"
+          },
+          "shippingDetails": {
+            "@type": "OfferShippingDetails",
+            "shippingRate": {
+              "@type": "MonetaryAmount",
+              "value": "0",
+              "currency": "INR"
+            },
+            "shippingDestination": {
+              "@type": "DefinedRegion",
+              "addressCountry": "IN"
+            }
+          },
+          "hasMerchantReturnPolicy": {
+            "@type": "MerchantReturnPolicy",
+            "applicableCountry": "IN",
+            "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+            "merchantReturnDays": "7",
+            "returnMethod": "https://schema.org/ReturnByMail",
+            "returnFees": "https://schema.org/FreeReturn"
+          }
+        }
+      };
+
+      script.textContent = JSON.stringify(schemaData);
+      document.head.appendChild(script);
+
+      // Dynamically update document title & meta description for aggressive Google Search optimization
+      const originalTitle = document.title;
+      const originalMetaDesc = document.querySelector('meta[name="description"]')?.getAttribute("content");
+      
+      document.title = `${product.name} - Official Cockroach Janta Party Merch`;
+      
+      const metaDescEl = document.querySelector('meta[name="description"]');
+      if (metaDescEl) {
+        metaDescEl.setAttribute("content", `Buy ${product.name} online at Cockroach Janta Party Store! ${product.description.slice(0, 150)}... High quality, radiation resistant, Free Delivery all over India!`);
+      }
+
+      return () => {
+        const scriptToRemove = document.getElementById("product-schema-ld");
+        if (scriptToRemove) {
+          scriptToRemove.remove();
+        }
+        document.title = originalTitle;
+        if (metaDescEl && originalMetaDesc) {
+          metaDescEl.setAttribute("content", originalMetaDesc);
+        }
+      };
+    }
+  }, [product, currentPrice]);
+
   if (!product) {
     return (
       <div className="container mx-auto px-4 py-20 text-center">
@@ -47,15 +140,9 @@ export function ProductDetail() {
     );
   }
 
-  const pricesObj = product.tShirtPrices || {};
   const availableSizes = Object.entries(pricesObj)
     .filter(([_, price]) => price !== undefined)
     .map(([size, _]) => size as Size);
-
-  const currentPrice = 
-    product.category === "t-shirt" && selectedSize && pricesObj[selectedSize] !== undefined 
-      ? pricesObj[selectedSize]! 
-      : product.price;
 
   const handleAdd = () => {
     if (product.category === "t-shirt" && !selectedSize) {

@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { ImagePlus, PackagePlus, AlertOctagon, Trash2, Download, ClipboardList, CheckCircle2, Clock, Truck, Upload } from "lucide-react";
+import { ImagePlus, PackagePlus, AlertOctagon, Trash2, Download, ClipboardList, CheckCircle2, Clock, Truck, Upload, Edit3 } from "lucide-react";
 import { useShop } from "../context/ShopContext";
 import { formatPrice } from "../lib/utils";
 
 export function Admin() {
-  const { products, addProduct, removeProduct, orders, updateOrderStatus, deleteOrder, productsSold, updateProductsSold, visitorsCount, updateVisitorsCount } = useShop();
+  const { products, addProduct, editProduct, removeProduct, orders, updateOrderStatus, deleteOrder, productsSold, updateProductsSold, visitorsCount, updateVisitorsCount } = useShop();
   const [activeTab, setActiveTab] = useState<"inventory" | "orders">("orders");
-  
+
+  const [editingProductId, setEditingProductId] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [category, setCategory] = useState<import("../types").ProductCategory>("other");
   const [price, setPrice] = useState("");
@@ -53,7 +54,7 @@ export function Admin() {
     setSubmitSuccess(false);
 
     try {
-      await addProduct({
+      const productPayload = {
         name,
         category,
         price: category === "t-shirt" && Object.entries(tShirtPrices).length > 0 
@@ -62,7 +63,14 @@ export function Admin() {
         ...(category === "t-shirt" ? { tShirtPrices } : {}),
         description,
         imageUrl: imageUrl || "https://images.unsplash.com/photo-1572375992501-4b0892d50c69?q=80&w=800&auto=format&fit=crop",
-      });
+      };
+
+      if (editingProductId) {
+        await editProduct(editingProductId, productPayload);
+        setEditingProductId(null);
+      } else {
+        await addProduct(productPayload);
+      }
 
       setName("");
       setCategory("other");
@@ -128,6 +136,17 @@ export function Admin() {
       }
     };
     reader.readAsDataURL(file);
+  };
+
+  const handleEditClick = (product: import("../types").Product) => {
+    setEditingProductId(product.id);
+    setName(product.name);
+    setCategory(product.category);
+    setPrice(product.price.toString());
+    setTShirtPrices(product.tShirtPrices || {});
+    setDescription(product.description || "");
+    setImageUrl(product.imageUrl || "");
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleDrag = (e: React.DragEvent) => {
@@ -534,24 +553,43 @@ export function Admin() {
                   )}
 
                   {/* Publish submit button */}
-                  <button 
-                    type="submit"
-                    disabled={isSubmitting}
-                    className={`w-full font-bold uppercase text-xs sm:text-sm py-2.5 sm:py-3 transition-all cursor-pointer flex items-center justify-center gap-2 border border-blue-850 outline-none ${
-                      isSubmitting 
-                        ? "bg-gray-800 text-gray-500 cursor-not-allowed border-gray-700 shadow-none" 
-                        : "bg-blue-600 text-black hover:bg-blue-500 shadow-[3px_3px_0px_#1e3a8a] active:translate-y-[1px] active:translate-x-[1px] active:shadow-none"
-                    }`}
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <span className="h-3.5 w-3.5 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
-                        Publishing...
-                      </>
-                    ) : (
-                      "Publish Product"
+                  <div className="flex gap-2">
+                    <button 
+                      type="submit"
+                      disabled={isSubmitting}
+                      className={`flex-1 font-bold uppercase text-xs sm:text-sm py-2.5 sm:py-3 transition-all cursor-pointer flex items-center justify-center gap-2 border border-blue-850 outline-none ${
+                        isSubmitting 
+                          ? "bg-gray-800 text-gray-500 cursor-not-allowed border-gray-700 shadow-none" 
+                          : "bg-blue-600 text-black hover:bg-blue-500 shadow-[3px_3px_0px_#1e3a8a] active:translate-y-[1px] active:translate-x-[1px] active:shadow-none"
+                      }`}
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <span className="h-3.5 w-3.5 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
+                          {editingProductId ? "Updating..." : "Publishing..."}
+                        </>
+                      ) : (
+                        editingProductId ? "Update Product" : "Publish Product"
+                      )}
+                    </button>
+                    {editingProductId && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingProductId(null);
+                          setName("");
+                          setCategory("other");
+                          setPrice("");
+                          setTShirtPrices({});
+                          setDescription("");
+                          setImageUrl("");
+                        }}
+                        className="bg-gray-800 text-gray-300 px-4 font-bold uppercase text-xs border border-gray-700 hover:bg-gray-700 transition-colors"
+                      >
+                        Cancel
+                      </button>
                     )}
-                  </button>
+                  </div>
                 </form>
               </div>
             </div>
@@ -594,17 +632,26 @@ export function Admin() {
                           {product.category}
                         </span>
                       </div>
-                      <button 
-                        onClick={() => {
-                          if (window.confirm(`Discontinue item: "${product.name}"?`)) {
-                            removeProduct(product.id);
-                          }
-                        }}
-                        className="p-2 sm:p-2.5 bg-red-950/30 flex items-center justify-center text-red-500 hover:bg-red-600 hover:text-white transition-colors cursor-pointer border border-red-950 hover:border-red-750 shrink-0 rounded-sm"
-                        title="Remove product"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                      <div className="flex gap-2 shrink-0">
+                        <button 
+                          onClick={() => handleEditClick(product)}
+                          className="p-2 sm:p-2.5 bg-blue-950/30 flex items-center justify-center text-blue-500 hover:bg-blue-600 hover:text-white transition-colors cursor-pointer border border-blue-950 hover:border-blue-750 rounded-sm"
+                          title="Edit product"
+                        >
+                          <Edit3 size={16} />
+                        </button>
+                        <button 
+                          onClick={() => {
+                            if (window.confirm(`Discontinue item: "${product.name}"?`)) {
+                              removeProduct(product.id);
+                            }
+                          }}
+                          className="p-2 sm:p-2.5 bg-red-950/30 flex items-center justify-center text-red-500 hover:bg-red-600 hover:text-white transition-colors cursor-pointer border border-red-950 hover:border-red-750 rounded-sm"
+                          title="Remove product"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
                     </div>
                   ))
                 )}

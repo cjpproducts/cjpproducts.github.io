@@ -18,6 +18,7 @@ interface ShopContextType {
   orders: Order[];
   isCartOpen: boolean;
   addProduct: (product: Omit<Product, "id" | "createdAt">) => Promise<void>;
+  editProduct: (id: string, updates: Partial<Product>) => Promise<void>;
   removeProduct: (id: string) => Promise<void>;
   addToCart: (item: CartItem) => void;
   removeFromCart: (cartItemId: string) => void;
@@ -199,6 +200,15 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const editProduct = async (id: string, updates: Partial<Product>) => {
+    try {
+      const sanitizedUpdates = sanitizeForFirestore(updates);
+      await updateDoc(doc(db, "products", id), sanitizedUpdates);
+    } catch (err) {
+      handleFirestoreError(err, OperationType.WRITE, `products/${id}`);
+    }
+  };
+
   const removeProduct = async (id: string) => {
     try {
       await deleteDoc(doc(db, "products", id));
@@ -300,6 +310,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
         orders,
         isCartOpen,
         addProduct,
+        editProduct,
         removeProduct,
         addToCart,
         removeFromCart,
