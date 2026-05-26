@@ -21,6 +21,8 @@ export function Admin() {
 
   // Authentication System
   const [password, setPassword] = useState("");
+  const [loginStep, setLoginStep] = useState<1 | 2>(1);
+  const [pin, setPin] = useState("");
   const [authError, setAuthError] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     return localStorage.getItem("cjp_admin_auth") === "true";
@@ -29,11 +31,39 @@ export function Admin() {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (password === "priyamkesh8825") {
-      setIsAuthenticated(true);
-      localStorage.setItem("cjp_admin_auth", "true");
+      setLoginStep(2);
       setAuthError("");
     } else {
       setAuthError("Incorrect password. Access denied.");
+    }
+  };
+
+  const handlePinSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmedPin = pin.trim();
+    const now = new Date();
+    
+    const getPinForDate = (d: Date) => {
+      let hours = d.getHours() % 12;
+      if (hours === 0) hours = 12;
+      const minutes = d.getMinutes();
+      const formattedMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
+      return `${hours}${formattedMinutes}`;
+    };
+
+    const currentPin = getPinForDate(now);
+    
+    // Also check 1 minute ago to absorb clock-boundary delays
+    const oneMinAgo = new Date(now.getTime() - 60000);
+    const prevPin = getPinForDate(oneMinAgo);
+    
+    if (trimmedPin === currentPin || trimmedPin === prevPin) {
+      setIsAuthenticated(true);
+      localStorage.setItem("cjp_admin_auth", "true");
+      setAuthError("");
+      setPin("");
+    } else {
+      setAuthError("Incorrect Security PIN. Enter your device's current browser time as digits (e.g. 9:27 = 927. No colons).");
     }
   };
 
@@ -41,6 +71,8 @@ export function Admin() {
     setIsAuthenticated(false);
     localStorage.removeItem("cjp_admin_auth");
     setPassword("");
+    setPin("");
+    setLoginStep(1);
   };
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -205,41 +237,105 @@ export function Admin() {
           </div>
           
           <h1 className="font-display text-3xl sm:text-4xl uppercase tracking-tight mb-2 text-blue-400">Admin Login</h1>
-          <p className="text-blue-600 font-bold uppercase text-[10px] sm:text-xs tracking-wider mb-8">
-            Access to dashboard is restricted.
-          </p>
           
-          <form onSubmit={handleLogin} className="space-y-6 text-left">
-            <div className="space-y-2">
-              <label className="font-bold uppercase text-[10px] sm:text-xs tracking-wider text-blue-500 block">
-                Enter Secret Access Code
-              </label>
-              <input 
-                type="password" 
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  setAuthError("");
-                }}
-                required
-                className="w-full border border-blue-900 bg-gray-900 px-4 py-3 font-mono font-bold focus:outline-none focus:ring-2 focus:ring-blue-600 text-center text-sm sm:text-lg text-blue-200 shadow-[4px_4px_0px_#000]"
-                placeholder="••••••••••••"
-              />
-            </div>
+          {loginStep === 1 ? (
+            <>
+              <p className="text-blue-600 font-bold uppercase text-[10px] sm:text-xs tracking-wider mb-8">
+                Step 1 of 2: Primary Password Check
+              </p>
+              
+              <form onSubmit={handleLogin} className="space-y-6 text-left">
+                <div className="space-y-2">
+                  <label className="font-bold uppercase text-[10px] sm:text-xs tracking-wider text-blue-500 block">
+                    Enter Secret Access Code
+                  </label>
+                  <input 
+                    type="password" 
+                    value={password}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      setAuthError("");
+                    }}
+                    required
+                    className="w-full border border-blue-900 bg-gray-900 px-4 py-3 font-mono font-bold focus:outline-none focus:ring-2 focus:ring-blue-600 text-center text-sm sm:text-lg text-blue-200 shadow-[4px_4px_0px_#000]"
+                    placeholder="••••••••••••"
+                  />
+                </div>
 
-            {authError && (
-              <div className="border border-red-800 bg-red-900/30 text-red-500 font-bold uppercase text-xs p-3 text-center">
-                {authError}
-              </div>
-            )}
+                {authError && (
+                  <div className="border border-red-800 bg-red-900/30 text-red-500 font-bold uppercase text-xs p-3 text-center">
+                    {authError}
+                  </div>
+                )}
 
-            <button 
-              type="submit"
-              className="w-full bg-blue-700 text-black font-display uppercase text-xl sm:text-2xl py-3 sm:py-4 hover:bg-blue-500 transition-colors shadow-[4px_4px_0px_#1e3a8a] sm:shadow-[6px_6px_0px_#1e3a8a] active:translate-y-1 active:translate-x-1 active:shadow-none cursor-pointer"
-            >
-              Login
-            </button>
-          </form>
+                <button 
+                  type="submit"
+                  className="w-full bg-blue-700 text-black font-display uppercase text-xl sm:text-2xl py-3 sm:py-4 hover:bg-blue-500 transition-colors shadow-[4px_4px_0px_#1e3a8a] sm:shadow-[6px_6px_0px_#1e3a8a] active:translate-y-1 active:translate-x-1 active:shadow-none cursor-pointer"
+                >
+                  Next Step
+                </button>
+              </form>
+            </>
+          ) : (
+            <>
+              <p className="text-blue-600 font-bold uppercase text-[10px] sm:text-xs tracking-wider mb-8">
+                Step 2 of 2: Dynamic Time PIN Challenge
+              </p>
+              
+              <form onSubmit={handlePinSubmit} className="space-y-6 text-left">
+                <div className="space-y-2">
+                  <label className="font-bold uppercase text-[10px] sm:text-xs tracking-wider text-blue-500 block">
+                    Enter Current 12-Hour Time PIN
+                  </label>
+                  <div className="p-3 bg-gray-950 border border-blue-955 text-gray-400 font-mono text-[10px] md:text-xs leading-relaxed uppercase space-y-1 rounded-sm select-none">
+                    <div>Your browser's local time as digits.</div>
+                    <div className="text-blue-400 text-[9px] font-bold">
+                      Format: HMM or HHMM (e.g., 9:27 is 927 | 11:12 is 1112 | 12:05 is 1205)
+                    </div>
+                  </div>
+                  <input 
+                    type="text" 
+                    pattern="\d*"
+                    maxLength={4}
+                    value={pin}
+                    onChange={(e) => {
+                      setPin(e.target.value);
+                      setAuthError("");
+                    }}
+                    required
+                    className="w-full border border-blue-900 bg-gray-900 px-4 py-3 font-mono font-bold focus:outline-none focus:ring-2 focus:ring-blue-600 text-center text-lg sm:text-2xl tracking-widest text-blue-200 shadow-[4px_4px_0px_#000]"
+                    placeholder="e.g. 927"
+                  />
+                </div>
+
+                {authError && (
+                  <div className="border border-red-800 bg-red-900/30 text-red-500 font-bold uppercase text-xs p-3 text-center font-bold">
+                    {authError}
+                  </div>
+                )}
+
+                <div className="flex gap-4">
+                  <button 
+                    type="button"
+                    onClick={() => {
+                      setLoginStep(1);
+                      setAuthError("");
+                      setPin("");
+                    }}
+                    className="w-1/3 bg-gray-900 border border-blue-900 font-display uppercase tracking-tight text-xs py-3 text-blue-500 hover:bg-gray-850 hover:text-blue-400 transition-colors shadow-[2px_2px_0px_#000] active:translate-y-0.5 active:translate-x-0.5 active:shadow-none"
+                  >
+                    Back
+                  </button>
+                  <button 
+                    type="submit"
+                    className="w-2/3 bg-blue-700 text-black font-display uppercase tracking-tight text-base sm:text-lg py-3 hover:bg-blue-500 transition-colors shadow-[4px_4px_0px_#1e3a8a] active:translate-y-1 active:translate-x-1 active:shadow-none cursor-pointer"
+                  >
+                    Verify PIN
+                  </button>
+                </div>
+              </form>
+            </>
+          )}
 
           <div className="mt-8 pt-4 border-t border-dashed border-blue-900">
             <Link to="/" className="text-xs sm:text-sm font-bold uppercase text-blue-700 hover:text-blue-400 transition-colors">
