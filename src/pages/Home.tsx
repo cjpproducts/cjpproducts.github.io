@@ -144,7 +144,7 @@ export function Home() {
           <p className="text-gray-400 font-bold uppercase tracking-wider mb-8">We were here before you. We will be here after you.</p>
           <p className="text-sm text-gray-600 mb-6">© {new Date().getFullYear()} Cockroach Janta Party. All Rights Reserved. Not a real political party (yet).</p>
           <p className="text-xs text-gray-500 font-mono font-bold uppercase tracking-wider">
-            Made by <a href="https://cjpproducts.github.io" target="_blank" rel="noopener noreferrer" className="text-cjp-accent hover:text-white transition-colors underline decoration-2 underline-offset-2">cjpproducts</a>
+            Made by <a href="https://polarithweb.github.io" target="_blank" rel="noopener noreferrer" className="text-cjp-accent hover:text-white transition-colors underline decoration-2 underline-offset-2">Polarith Web</a>
           </p>
         </div>
       </footer>
