@@ -75,7 +75,7 @@ export function Cart() {
                 ) : (
                   <ShoppingBag />
                 )}
-                {checkoutStep ? "Citizen Record" : "Rations"}
+                {checkoutStep ? "Customer Record" : "Cart"}
               </h2>
               <button 
                 onClick={handleClose}
@@ -155,7 +155,7 @@ export function Cart() {
               <form onSubmit={handleCheckoutSubmit} className="flex-1 overflow-y-auto flex flex-col">
                 <div className="p-6 space-y-5 flex-1">
                   <div className="space-y-1">
-                    <label className="font-bold uppercase text-sm block">Citizen Name *</label>
+                    <label className="font-bold uppercase text-sm block">Name *</label>
                     <input 
                       required type="text" value={name} onChange={(e) => setName(e.target.value)}
                       className="w-full border-2 border-cjp-dark bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cjp-accent"

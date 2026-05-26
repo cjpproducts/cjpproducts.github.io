@@ -54,7 +54,7 @@ export function Home() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row md:items-end justify-between border-b-4 border-cjp-dark pb-6 mb-8">
             <div>
-              <h2 className="font-display text-5xl md:text-7xl uppercase tracking-tighter">Official Rations</h2>
+              <h2 className="font-display text-5xl md:text-7xl uppercase tracking-tighter">Official Products</h2>
               <p className="text-gray-600 font-bold uppercase mt-2">Fund the revolution. Buy our stuff.</p>
             </div>
             
@@ -90,8 +90,8 @@ export function Home() {
 
           {filteredProducts.length === 0 ? (
             <div className="bg-white border-4 border-cjp-dark p-12 text-center shadow-[8px_8px_0px_#1a1a1a]">
-              <h3 className="font-display text-4xl uppercase mb-4">No Rations Found</h3>
-              <p className="text-xl text-gray-600">The overlords have stripped us of this item. Try another search.</p>
+              <h3 className="font-display text-4xl uppercase mb-4">No Products Found</h3>
+              <p className="text-xl text-gray-600">Try another search or category.</p>
             </div>
           ) : (
             <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-8">

@@ -140,7 +140,7 @@ export function ProductDetail() {
               onClick={handleAdd}
               className="w-full bg-cjp-accent text-white py-5 font-display text-2xl uppercase hover:bg-cjp-dark transition-colors shadow-[6px_6px_0px_#1a1a1a] active:translate-y-2 active:translate-x-2 active:shadow-none flex items-center justify-center gap-3"
             >
-              <ShoppingCart size={28} /> Add to Rations (Cart)
+              <ShoppingCart size={28} /> Add to Cart
             </button>
           </div>
         </div>

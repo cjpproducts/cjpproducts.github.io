@@ -30,7 +30,7 @@ export function Admin() {
       localStorage.setItem("cjp_admin_auth", "true");
       setAuthError("");
     } else {
-      setAuthError("INCORRECT SECURITY ACCESS CODE. THE PARTY IS WATCHING.");
+      setAuthError("Incorrect password. Access denied.");
     }
   };
 
@@ -173,20 +173,20 @@ export function Admin() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-[calc(100vh-80px)] flex flex-col items-center justify-center bg-cjp-light px-4 py-12">
-        <div className="w-full max-w-md bg-white border-4 border-cjp-dark p-8 shadow-[12px_12px_0px_#ff4500] text-center">
-          <div className="bg-red-600 text-white p-4 inline-block shadow-[4px_4px_0px_#1a1a1a] rotate-[-3deg] mb-6">
+      <div className="min-h-[calc(100vh-80px)] flex flex-col items-center justify-center bg-black px-4 py-12">
+        <div className="w-full max-w-md bg-black border-4 border-blue-900 p-8 shadow-[12px_12px_0px_#1e3a8a] text-center">
+          <div className="bg-blue-600 text-black p-4 inline-block shadow-[4px_4px_0px_#000] rotate-[-3deg] mb-6 border border-blue-800">
             <AlertOctagon size={48} className="animate-pulse" />
           </div>
           
-          <h1 className="font-display text-4xl uppercase tracking-tight mb-2">War Room Lockout</h1>
-          <p className="text-gray-600 font-bold uppercase text-xs tracking-wider mb-8">
-            Access to CJP Party Headquarters is restricted. <br />Comply with security checks.
+          <h1 className="font-display text-4xl uppercase tracking-tight mb-2 text-blue-400">Admin Login</h1>
+          <p className="text-blue-600 font-bold uppercase text-xs tracking-wider mb-8">
+            Access to dashboard is restricted.
           </p>
           
           <form onSubmit={handleLogin} className="space-y-6 text-left">
             <div className="space-y-2">
-              <label className="font-bold uppercase text-xs tracking-wider text-gray-700 block">
+              <label className="font-bold uppercase text-xs tracking-wider text-blue-500 block">
                 Enter Secret Access Code
               </label>
               <input 
@@ -197,27 +197,27 @@ export function Admin() {
                   setAuthError("");
                 }}
                 required
-                className="w-full border-4 border-cjp-dark bg-cjp-light px-4 py-3 font-mono font-bold focus:outline-none focus:ring-4 focus:ring-cjp-accent text-center text-lg shadow-[4px_4px_0px_#1a1a1a]"
+                className="w-full border-4 border-blue-900 bg-gray-900 px-4 py-3 font-mono font-bold focus:outline-none focus:ring-4 focus:ring-blue-600 text-center text-lg text-blue-200 shadow-[4px_4px_0px_#000]"
                 placeholder="••••••••••••"
               />
             </div>
 
             {authError && (
-              <div className="border-2 border-red-600 bg-red-50 text-red-700 font-bold uppercase text-xs p-3 text-center">
+              <div className="border-2 border-red-800 bg-red-900/30 text-red-500 font-bold uppercase text-xs p-3 text-center">
                 {authError}
               </div>
             )}
 
             <button 
               type="submit"
-              className="w-full bg-cjp-dark text-white font-display uppercase text-2xl py-4 hover:bg-cjp-accent transition-colors shadow-[6px_6px_0px_#ff4500] active:translate-y-1 active:translate-x-1 active:shadow-none cursor-pointer"
+              className="w-full bg-blue-700 text-black font-display uppercase text-2xl py-4 hover:bg-blue-500 transition-colors shadow-[6px_6px_0px_#1e3a8a] active:translate-y-1 active:translate-x-1 active:shadow-none cursor-pointer"
             >
-              Verify Authority
+              Login
             </button>
           </form>
 
-          <div className="mt-8 pt-4 border-t-2 border-dashed border-gray-200">
-            <Link to="/" className="text-sm font-bold uppercase text-gray-500 hover:text-cjp-accent transition-colors">
+          <div className="mt-8 pt-4 border-t-2 border-dashed border-blue-900">
+            <Link to="/" className="text-sm font-bold uppercase text-blue-700 hover:text-blue-400 transition-colors">
               ← Return to Public Store
             </Link>
           </div>
@@ -227,147 +227,146 @@ export function Admin() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-6xl">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 border-b-4 border-cjp-dark pb-6">
-        <div className="flex items-center gap-4">
-          <div className="bg-black text-green-500 p-3 shadow-[4px_4px_0px_#1a1a1a] border border-green-500">
-            <AlertOctagon size={40} />
-          </div>
-          <div>
-            <h1 className="font-mono text-3xl font-bold uppercase tracking-tight text-gray-900 border-b-4 border-black inline-block pb-1 pr-4">SYS&gt; ADMIN_TERMINAL</h1>
-            <div className="flex items-center gap-3 mt-3">
-              <span className="font-mono text-gray-600 font-bold uppercase text-xs px-2 py-0.5 bg-gray-200 border border-gray-400">AUTH: OMEGA</span>
-              <span className="text-xs text-green-700 font-bold uppercase font-mono flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse block"></span>
-                SYSTEM ACTIVE
-              </span>
+    <div className="bg-black min-h-screen">
+      <div className="container mx-auto px-4 py-12 max-w-6xl">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 border-b-4 border-blue-900 pb-6">
+          <div className="flex items-center gap-4">
+            <div className="bg-blue-600 text-black p-3 shadow-[4px_4px_0px_#000000] border border-blue-800">
+              <AlertOctagon size={40} className="text-black" />
+            </div>
+            <div>
+              <h1 className="font-display text-2xl md:text-4xl text-blue-500 uppercase tracking-tight border-b-4 border-blue-800 break-words pb-1 pr-4">Admin Dashboard</h1>
+              <div className="flex flex-wrap items-center gap-3 mt-3">
+                <span className="font-mono text-black font-bold uppercase text-xs px-2 py-0.5 bg-blue-500 border border-blue-700">Admin Active</span>
+                <span className="text-xs text-blue-500 font-bold uppercase font-mono flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-blue-500 animate-pulse shrink-0 block"></span>
+                  Online
+                </span>
+              </div>
             </div>
           </div>
-        </div>
-        
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="flex border-2 border-black bg-gray-100 p-1">
+          
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex border-2 border-blue-900 bg-black p-1">
+              <button
+                onClick={() => setActiveTab("orders")}
+                className={`px-4 sm:px-6 py-2 font-mono font-bold uppercase text-xs cursor-pointer transition-colors ${
+                  activeTab === "orders" ? "bg-blue-600 text-black shadow-[2px_2px_0px_#1e3a8a]" : "hover:bg-gray-900 text-blue-600"
+                }`}
+              >
+                Manage Orders
+              </button>
+              <button
+                onClick={() => setActiveTab("inventory")}
+                className={`px-4 sm:px-6 py-2 font-mono font-bold uppercase text-xs cursor-pointer transition-colors ${
+                  activeTab === "inventory" ? "bg-blue-600 text-black shadow-[2px_2px_0px_#1e3a8a]" : "hover:bg-gray-900 text-blue-600"
+                }`}
+              >
+                Inventory Control
+              </button>
+            </div>
+            
             <button
-              onClick={() => setActiveTab("orders")}
-              className={`px-6 py-2 font-mono font-bold uppercase text-xs cursor-pointer transition-colors ${
-                activeTab === "orders" ? "bg-black text-green-400 shadow-[2px_2px_0px_#4ade80]" : "hover:bg-gray-200 text-gray-700"
-              }`}
+              onClick={handleLogout}
+              className="bg-blue-800 text-white font-mono border-2 border-blue-900 font-bold uppercase px-4 py-2 text-xs shadow-[2px_2px_0px_#000] hover:bg-black hover:text-blue-500 transition-colors cursor-pointer"
             >
-              [ Manage Orders ]
-            </button>
-            <button
-              onClick={() => setActiveTab("inventory")}
-              className={`px-6 py-2 font-mono font-bold uppercase text-xs cursor-pointer transition-colors ${
-                activeTab === "inventory" ? "bg-black text-green-400 shadow-[2px_2px_0px_#4ade80]" : "hover:bg-gray-200 text-gray-700"
-              }`}
-            >
-              [ Inventory Control ]
+              Logout
             </button>
           </div>
-          
-          <button
-            onClick={handleLogout}
-            className="bg-red-600 text-white font-mono border-2 border-black font-bold uppercase px-4 py-2 text-xs shadow-[2px_2px_0px_#000] hover:bg-black transition-colors cursor-pointer"
-          >
-            END_SESSION
-          </button>
         </div>
-      </div>
 
       {activeTab === "inventory" && (
         <div className="grid md:grid-cols-2 gap-12">
           <div className="flex flex-col gap-6">
-            <div className="bg-black text-green-400 border-2 border-green-500 p-6 shadow-[8px_8px_0px_#1a1a1a] font-mono">
-              <h2 className="text-xl font-bold uppercase mb-4 border-b-2 border-dashed border-green-800 pb-2 flex items-center gap-2">
-                <span className="animate-pulse">_</span> SYS_STATS_OVERRIDE
+            <div className="bg-black text-blue-400 border-2 border-blue-800 p-6 shadow-[8px_8px_0px_#1e3a8a] font-mono">
+              <h2 className="text-xl font-bold uppercase mb-4 border-b-2 border-dashed border-blue-900 pb-2 flex items-center gap-2">
+                System Stats
               </h2>
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                  <label className="font-bold uppercase text-xs text-green-600 w-32">&gt; TOTAL_SOLD :</label>
+                  <label className="font-bold uppercase text-xs text-blue-600 w-32">Total Products Sold:</label>
                   <div className="flex items-center flex-1 w-full gap-2">
-                    <span className="text-gray-500">[</span>
+                    <span className="text-blue-800">[</span>
                     <input
                       type="number"
                       value={localProductsSold}
                       onChange={(e) => setLocalProductsSold(e.target.value)}
-                      className="flex-1 bg-transparent border-b border-green-800 text-green-400 px-2 py-1 font-bold text-xl focus:outline-none focus:border-green-400 text-center"
+                      className="flex-1 bg-transparent border-b border-blue-900 text-blue-400 px-2 py-1 font-bold text-xl focus:outline-none focus:border-blue-600 text-center"
                     />
-                    <span className="text-gray-500">]</span>
+                    <span className="text-blue-800">]</span>
                     <button 
                       onClick={() => {
                         const val = parseInt(localProductsSold) || 0;
                         updateProductsSold(val);
                       }}
-                      className="ml-2 bg-green-500 text-black font-bold px-3 py-1 text-xs hover:bg-green-400 active:translate-y-[1px] active:translate-x-[1px]"
+                      className="ml-2 bg-blue-600 text-black font-bold px-3 py-1 text-xs hover:bg-blue-500 active:translate-y-[1px] active:translate-x-[1px]"
                     >
                       UPDATE
                     </button>
                   </div>
                 </div>
-                <p className="text-[10px] text-green-800 uppercase mt-2">* MANUAL OVERRIDE LOGGED IN FIRESTORE.</p>
+                <p className="text-[10px] text-blue-700 uppercase mt-2">* Update total sold counter manually if required.</p>
               </div>
             </div>
 
             {/* ADD PRODUCT FORM */}
-            <div className="bg-white border-2 border-black p-6 shadow-[8px_8px_0px_#1a1a1a] font-mono">
-          <h2 className="text-xl uppercase font-bold mb-6 flex items-center gap-3 border-b-2 border-dashed border-gray-400 pb-3">
-            <PackagePlus /> &gt; INJECT_NEW_RATION
+            <div className="bg-black border-2 border-blue-800 p-6 shadow-[8px_8px_0px_#1e3a8a] text-blue-300">
+          <h2 className="text-xl uppercase font-bold mb-6 flex items-center gap-3 border-b-2 border-dashed border-blue-900 pb-3 text-blue-400">
+            <PackagePlus /> Add Product
           </h2>
           
           <form onSubmit={handleSubmit} className="space-y-5 text-sm">
             <div className="space-y-1">
-              <label className="font-bold uppercase text-xs text-gray-500 block">&gt; DESIGNATION</label>
-              <div className="flex items-center gap-2 border border-gray-400 bg-gray-50 px-3 py-2">
-                <span className="text-gray-400">$</span>
+              <label className="font-bold uppercase text-xs text-blue-500 block">Product Name</label>
+              <div className="flex items-center gap-2 border border-blue-800 bg-gray-900 px-3 py-2">
                 <input 
                   type="text" 
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
-                  className="w-full bg-transparent focus:outline-none font-bold placeholder-gray-300"
-                  placeholder="ITEM_NAME_HERE"
+                  className="w-full bg-transparent focus:outline-none font-bold placeholder-blue-900 text-blue-200"
+                  placeholder="e.g. T-Shirt"
                 />
               </div>
             </div>
 
             <div className="space-y-1">
-              <label className="font-bold uppercase text-xs text-gray-500 block">&gt; CATEGORY_CLASS</label>
-              <div className="flex items-center gap-2 border border-gray-400 bg-gray-50 px-3 py-2">
-                <span className="text-gray-400">$</span>
+              <label className="font-bold uppercase text-xs text-blue-500 block">Category</label>
+              <div className="flex items-center gap-2 border border-blue-800 bg-gray-900 px-3 py-2">
                 <select 
                   value={category}
                   onChange={(e) => setCategory(e.target.value as import("../types").ProductCategory)}
-                  className="w-full bg-transparent font-bold focus:outline-none cursor-pointer appearance-none"
+                  className="w-full bg-transparent font-bold focus:outline-none cursor-pointer appearance-none text-blue-200"
                 >
-                  <option value="other">[01] GENERIC_MERCH</option>
-                  <option value="t-shirt">[02] APPAREL_TSHIRT</option>
-                  <option value="mobile-cover">[03] TECH_SHIELD</option>
+                  <option value="other">Other Category</option>
+                  <option value="t-shirt">T-Shirt</option>
+                  <option value="mobile-cover">Mobile Cover</option>
                 </select>
               </div>
             </div>
             
             {category === "t-shirt" ? (
-              <div className="space-y-3 border border-dashed border-gray-400 p-4 bg-gray-50">
-                <label className="font-bold uppercase text-xs text-gray-500 block">&gt; PRICING_MATRIX (INR)</label>
+              <div className="space-y-3 border border-dashed border-blue-800 p-4 bg-gray-900">
+                <label className="font-bold uppercase text-xs text-blue-500 block">Price (INR)</label>
                 {(["S", "M", "L", "XL", "XXL"] as import("../types").Size[]).map((size) => (
-                  <div key={size} className="flex items-center gap-4 border-b border-gray-200 pb-2">
-                    <span className="font-bold text-gray-700 w-8">[{size}]</span>
+                  <div key={size} className="flex items-center gap-4 border-b border-blue-900 pb-2">
+                    <span className="font-bold text-blue-600 w-8">[{size}]</span>
                     <input 
                       type="number"
                       value={tShirtPrices[size] || ""}
                       onChange={(e) => setTShirtPrices(prev => ({ ...prev, [size]: e.target.value ? Number(e.target.value) : undefined }))}
                       min="0"
-                      className="flex-1 bg-transparent border-none text-sm focus:outline-none focus:ring-0 font-bold"
-                      placeholder="ENTER_VAL"
+                      className="flex-1 bg-transparent border-none text-sm focus:outline-none focus:ring-0 font-bold text-blue-200"
+                      placeholder="Price"
                     />
                   </div>
                 ))}
               </div>
             ) : (
               <div className="space-y-1">
-                <label className="font-bold uppercase text-xs text-gray-500 block">&gt; BASE_CONTRIBUTION (INR)</label>
-                <div className="flex items-center gap-2 border border-gray-400 bg-gray-50 px-3 py-2">
-                  <span className="text-gray-400">$</span>
+                <label className="font-bold uppercase text-xs text-blue-500 block">Price (INR)</label>
+                <div className="flex items-center gap-2 border border-blue-800 bg-gray-900 px-3 py-2">
+                  <span className="text-blue-800 font-sans">₹</span>
                   <input 
                     type="number" 
                     value={price}
@@ -375,15 +374,15 @@ export function Admin() {
                     required
                     min="0"
                     step="1"
-                    className="w-full bg-transparent font-bold focus:outline-none"
-                    placeholder="AMOUNT"
+                    className="w-full bg-transparent font-bold focus:outline-none text-blue-200"
+                    placeholder="Amount"
                   />
                 </div>
               </div>
             )}
             
             <div className="space-y-1">
-              <label className="font-bold uppercase text-xs text-gray-500 block">&gt; VISUAL_ASSET</label>
+              <label className="font-bold uppercase text-xs text-blue-500 block">Product Image</label>
               
               {/* Drag and Drop Zone */}
               <div 
@@ -392,8 +391,8 @@ export function Admin() {
                 onDragLeave={handleDrag}
                 onDrop={handleDrop}
                 className={`relative border border-dashed ${
-                  dragActive ? "border-green-500 bg-green-50" : "border-gray-400 bg-gray-50"
-                } p-6 text-center transition-all flex flex-col items-center justify-center min-h-[160px] cursor-pointer hover:border-black`}
+                  dragActive ? "border-blue-500 bg-blue-900/30" : "border-blue-800 bg-gray-900"
+                } p-6 text-center transition-all flex flex-col items-center justify-center min-h-[160px] cursor-pointer hover:border-blue-600`}
                 onClick={() => document.getElementById("file-upload")?.click()}
               >
                 <input 
@@ -409,49 +408,49 @@ export function Admin() {
                     <img 
                       src={imageUrl} 
                       alt="Preview" 
-                      className="max-h-32 object-cover border border-black shadow-[4px_4px_0px_#1a1a1a]"
+                      className="max-h-32 object-cover border border-blue-800 shadow-[4px_4px_0px_#000]"
                     />
                     <div className="flex gap-2">
                        <button
                         type="button"
                         onClick={() => setImageUrl("")}
-                        className="bg-black text-red-500 font-bold text-[10px] uppercase px-3 py-1.5 shadow-[2px_2px_0px_#ef4444] transition-colors cursor-pointer border border-red-500"
+                        className="bg-black text-red-500 font-bold text-[10px] uppercase px-3 py-1.5 shadow-[2px_2px_0px_#7f1d1d] transition-colors cursor-pointer border border-red-800 hover:bg-neutral-900"
                       >
-                        [ DEL_ASSET ]
+                        Remove Image
                       </button>
                       <button
                         type="button"
                         onClick={() => document.getElementById("file-upload")?.click()}
-                        className="bg-black text-green-400 font-bold text-[10px] uppercase px-3 py-1.5 shadow-[2px_2px_0px_#4ade80] transition-colors cursor-pointer border border-green-500"
+                        className="bg-black text-blue-400 font-bold text-[10px] uppercase px-3 py-1.5 shadow-[2px_2px_0px_#1e3a8a] transition-colors cursor-pointer border border-blue-800 hover:bg-neutral-900"
                       >
-                        [ REPLACE_ASSET ]
+                        Change Image
                       </button>
                     </div>
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center space-y-2 pointer-events-none">
-                    <Upload className="text-gray-400" size={24} />
-                    <p className="font-bold text-xs uppercase text-gray-600">INPUT_STREAM_AWAIT: IMAGE</p>
-                    <p className="text-[10px] text-gray-500">DND || CLICK. ALLOW: PNG,JPG,WEBP</p>
+                    <Upload className="text-blue-700" size={24} />
+                    <p className="font-bold text-xs uppercase text-blue-500">Drag & Drop Image or Click to Browse</p>
+                    <p className="text-[10px] text-blue-800">Supports PNG, JPG, GIF</p>
                   </div>
                 )}
               </div>
 
               {/* URL fallback */}
               <div className="pt-2">
-                <span className="text-[10px] font-bold text-gray-500 uppercase">&gt; OVERRIDE_URI:</span>
+                <span className="text-[10px] font-bold text-blue-600 uppercase">Or provide a web URL manually:</span>
                 <div className="relative mt-1">
-                  <ImagePlus className="absolute left-3 top-2.5 text-gray-400" size={16} />
+                  <ImagePlus className="absolute left-3 top-2.5 text-blue-800" size={16} />
                   <input 
                     type="url" 
                     value={imageUrl.startsWith("data:") ? "" : imageUrl}
                     onChange={(e) => setImageUrl(e.target.value)}
-                    className="w-full border border-gray-400 bg-gray-50 pl-10 pr-4 py-2 focus:outline-none font-bold focus:border-black text-xs"
+                    className="w-full border border-blue-800 bg-gray-900 pl-10 pr-4 py-2 focus:outline-none font-bold focus:border-blue-600 text-xs text-blue-200"
                     placeholder="https://"
                   />
                   {imageUrl.startsWith("data:") && (
-                    <span className="absolute right-3 top-2 text-[10px] text-green-600 font-bold">
-                      LOCAL_BLOB
+                    <span className="absolute right-3 top-2 text-[10px] text-blue-500 font-bold">
+                      Uploaded File Active
                     </span>
                   )}
                 </div>
@@ -459,45 +458,45 @@ export function Admin() {
             </div>
 
             <div className="space-y-1">
-              <label className="font-bold uppercase text-xs text-gray-500 block">&gt; MANIFESTO_TEXT</label>
+              <label className="font-bold uppercase text-xs text-blue-500 block">Description</label>
               <textarea 
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 required
                 rows={3}
-                className="w-full border border-gray-400 bg-gray-50 px-3 py-2 font-bold focus:outline-none focus:border-black resize-none"
-                placeholder="PROCEED_WITH_PROPAGANDA..."
+                className="w-full border border-blue-800 bg-gray-900 px-3 py-2 font-bold focus:outline-none focus:border-blue-600 resize-none text-blue-200"
+                placeholder="Product description..."
               />
             </div>
 
             {submitSuccess && (
-              <div className="border border-green-500 bg-black text-green-400 p-3 font-bold uppercase text-xs flex items-center justify-center shadow-[4px_4px_0px_#4ade80]">
-                <span>[ OK ] DATA_INJECTED_SUCCESSFULLY</span>
+              <div className="border border-green-500 bg-green-900/30 text-green-400 p-3 font-bold uppercase text-xs flex items-center justify-center shadow-[4px_4px_0px_#14532d]">
+                <span>Product published successfully!</span>
               </div>
             )}
 
             {submitError && (
-              <div className="border border-red-500 bg-black text-red-500 p-3 font-bold uppercase text-xs text-center shadow-[4px_4px_0px_#ef4444]">
-                [ ERR ] {submitError}
+              <div className="border border-red-500 bg-red-900/30 text-red-500 p-3 font-bold uppercase text-xs text-center shadow-[4px_4px_0px_#7f1d1d]">
+                Blocked: {submitError}
               </div>
             )}
 
             <button 
               type="submit"
               disabled={isSubmitting}
-              className={`w-full font-bold uppercase text-lg py-3 transition-all cursor-pointer flex items-center justify-center gap-2 border-2 border-black ${
+              className={`w-full font-bold uppercase text-lg py-3 transition-all cursor-pointer flex items-center justify-center gap-2 border-2 border-blue-800 ${
                 isSubmitting 
-                  ? "bg-gray-200 text-gray-500 cursor-not-allowed" 
-                  : "bg-black text-white hover:text-green-400 shadow-[4px_4px_0px_#1a1a1a] active:translate-y-1 active:translate-x-1 active:shadow-none"
+                  ? "bg-gray-800 text-gray-500 cursor-not-allowed border-gray-700 shadow-none" 
+                  : "bg-blue-600 text-black hover:bg-blue-500 shadow-[4px_4px_0px_#1e3a8a] active:translate-y-1 active:translate-x-1 active:shadow-none"
               }`}
             >
               {isSubmitting ? (
                 <>
-                  <span className="h-4 w-4 border-2 border-gray-500 border-t-transparent rounded-full animate-spin"></span>
-                  UPLOADING...
+                  <span className="h-4 w-4 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
+                  Publishing...
                 </>
               ) : (
-                "EXECUTE_DEPLOYMENT"
+                "Publish Product"
               )}
             </button>
           </form>
@@ -506,44 +505,44 @@ export function Admin() {
 
         {/* INVENTORY LIST */}
         <div className="space-y-6">
-          <div className="flex items-center justify-between border-b-2 border-dashed border-gray-400 pb-3">
-            <h2 className="font-mono text-xl font-bold uppercase flex items-center gap-2 text-gray-900">
-              &gt; MEM_BANKS ({products.length})
+          <div className="flex items-center justify-between border-b-2 border-dashed border-blue-900 pb-3">
+            <h2 className="font-mono text-xl font-bold uppercase flex items-center gap-2 text-blue-400">
+              Current Inventory ({products.length})
             </h2>
             <button
               onClick={handleExportJSON}
-              className="flex items-center gap-2 bg-black text-white hover:text-green-400 font-mono font-bold uppercase text-[10px] px-3 py-1.5 transition-colors shadow-[2px_2px_0px_#4ade80] active:translate-y-[1px] active:translate-x-[1px] active:shadow-none"
+              className="flex items-center gap-2 bg-blue-900/50 text-blue-400 hover:text-blue-300 hover:bg-blue-800 border border-blue-800 font-mono font-bold uppercase text-[10px] px-3 py-1.5 transition-colors shadow-[2px_2px_0px_#1e3a8a] active:translate-y-[1px] active:translate-x-[1px] active:shadow-none"
             >
               <Download size={14} />
-              DUMP_MEM
+              Export JSON
             </button>
           </div>
           
-          <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar font-mono">
+          <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar font-sans">
             {products.length === 0 ? (
-              <p className="text-gray-500 p-4 text-center border-2 border-dashed border-gray-400 font-bold uppercase text-xs">MEMORY_BANKS_EMPTY</p>
+              <p className="text-blue-700 p-4 text-center border-2 border-dashed border-blue-900 font-bold uppercase text-xs">Inventory depleted. Restock immediately.</p>
             ) : (
               products.map((product) => (
-                <div key={product.id} className="flex gap-4 bg-gray-50 border border-gray-400 shadow-[2px_2px_0px_#1a1a1a] p-3">
+                <div key={product.id} className="flex gap-4 bg-gray-900 border border-blue-800 shadow-[2px_2px_0px_#000] p-3">
                   <img 
                     src={product.imageUrl} 
                     alt={product.name}
-                    className="w-16 h-16 object-cover border border-gray-400"
+                    className="w-16 h-16 object-cover border border-blue-900"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=800&auto=format&fit=crop";
                     }}
                   />
                   <div className="flex-1 flex flex-col justify-center">
-                    <h3 className="font-bold uppercase text-sm leading-tight text-gray-900 line-clamp-1">{product.name}</h3>
-                    <p className="text-gray-500 text-xs mt-1">VAL: {formatPrice(product.price)}</p>
+                    <h3 className="font-bold uppercase text-sm leading-tight text-blue-200 line-clamp-1">{product.name}</h3>
+                    <p className="text-blue-500 text-xs mt-1">{formatPrice(product.price)}</p>
                   </div>
                   <button 
                     onClick={() => {
-                      if (window.confirm("PURGE ITEM FROM SYSTEM?")) {
+                      if (window.confirm("Discontinue this item?")) {
                         removeProduct(product.id);
                       }
                     }}
-                    className="p-2 bg-red-100 flex items-center justify-center text-red-600 hover:bg-red-500 hover:text-white transition-colors cursor-pointer border border-red-300"
+                    className="p-2 bg-red-900/20 flex items-center justify-center text-red-500 hover:bg-red-600 hover:text-white transition-colors cursor-pointer border border-red-900/50"
                   >
                     <Trash2 size={18} />
                   </button>
@@ -556,117 +555,116 @@ export function Admin() {
       )}
 
       {activeTab === "orders" && (
-        <div className="bg-white border-2 border-black p-6 shadow-[8px_8px_0px_#1a1a1a]">
-          <h2 className="font-mono text-2xl font-bold uppercase mb-6 flex items-center gap-3 border-b-2 border-dashed border-gray-400 pb-3">
-            <ClipboardList /> &gt; FETCH_ORDERS_LOG
+        <div className="bg-black border-2 border-blue-800 p-6 shadow-[8px_8px_0px_#1e3a8a] text-blue-200">
+          <h2 className="text-2xl font-bold uppercase mb-6 flex items-center gap-3 border-b-2 border-dashed border-blue-900 pb-3 text-blue-400">
+            <ClipboardList /> Received Orders
           </h2>
           
           <div className="space-y-6">
             {orders.length === 0 ? (
-              <div className="text-center py-10 opacity-60 font-mono">
-                <ClipboardList size={48} className="mx-auto mb-4" />
-                <p className="text-xl uppercase font-bold">Query returned 0 results.</p>
-                <p className="font-bold text-gray-500">Wait for citizens to comply.</p>
+              <div className="text-center py-10 opacity-60">
+                <ClipboardList size={48} className="mx-auto mb-4 text-blue-600" />
+                <p className="text-xl uppercase font-bold text-blue-400">No orders received yet.</p>
               </div>
             ) : (
               orders.map((order) => (
-                <div key={order.id} className="border border-gray-400 bg-gray-50 flex flex-col md:flex-row shadow-[4px_4px_0px_#1a1a1a]">
+                <div key={order.id} className="border border-blue-800 bg-gray-900 flex flex-col md:flex-row shadow-[4px_4px_0px_#000]">
                   <div className="flex-1 p-5">
-                    <div className="flex justify-between items-center border-b-2 border-gray-300 pb-2 mb-4">
+                    <div className="flex justify-between items-center border-b-2 border-blue-900 pb-2 mb-4">
                       <div className="flex items-center gap-3">
-                        <span className="font-mono bg-black text-green-400 px-2 py-0.5 text-xs">ID: {order.id.slice(0, 10)}...</span>
-                        <span className="font-mono text-xs font-bold text-gray-500">
-                          TS: {new Date(order.date).toLocaleString()}
+                        <span className="bg-blue-600 text-black px-2 py-0.5 text-xs font-bold font-mono">ID: {order.id.slice(0, 10)}...</span>
+                        <span className="text-xs font-bold text-blue-600">
+                          {new Date(order.date).toLocaleString()}
                         </span>
                       </div>
-                      <span className="font-mono font-bold text-lg text-cjp-dark">{formatPrice(order.total)}</span>
+                      <span className="font-bold text-lg text-blue-400">{formatPrice(order.total)}</span>
                     </div>
                     
-                    <div className="bg-black p-4 text-xs font-mono border border-green-500 text-green-400 shadow-[inset_0_0_10px_rgba(0,255,0,0.1)] mb-4">
-                      <p className="text-white uppercase mb-2 border-b border-green-900 pb-1">&gt; CUSTOMER_DATA</p>
+                    <div className="bg-black p-4 text-xs border border-blue-800 text-blue-300 mb-4 font-sans">
+                      <p className="text-blue-500 font-bold uppercase mb-2 border-b border-blue-900 pb-1">Customer Record</p>
                       <ul className="space-y-1">
-                        <li><span className="text-gray-400">NAME:</span> {order.customerInfo?.name || "Unknown"}</li>
-                        <li><span className="text-gray-400">PHON:</span> {order.customerInfo?.phone || "Unknown"}</li>
-                        {order.customerInfo?.whatsapp && <li><span className="text-gray-400">WAPP:</span> {order.customerInfo.whatsapp}</li>}
-                        <li><span className="text-gray-400">ADDR:</span> {order.customerInfo?.address || "Unknown"}</li>
-                        <li><span className="text-gray-400">ZCODE:</span> {order.customerInfo?.pincode || "Unknown"}</li>
-                        <li className="uppercase mt-2 text-yellow-400 border-t border-green-900 pt-2">
-                          PAY: {order.customerInfo?.paymentMethod === 'cod' ? 'CASH ON DELIVERY' : 'PREPAID'}
+                        <li><span className="text-blue-700">Name:</span> {order.customerInfo?.name || "Unknown"}</li>
+                        <li><span className="text-blue-700">Phone:</span> {order.customerInfo?.phone || "Unknown"}</li>
+                        {order.customerInfo?.whatsapp && <li><span className="text-blue-700">WhatsApp:</span> {order.customerInfo.whatsapp}</li>}
+                        <li><span className="text-blue-700">Address:</span> {order.customerInfo?.address || "Unknown"}</li>
+                        <li><span className="text-blue-700">PIN:</span> {order.customerInfo?.pincode || "Unknown"}</li>
+                        <li className="uppercase mt-2 text-blue-400 border-t border-blue-900 pt-2 font-bold">
+                          Payment: {order.customerInfo?.paymentMethod === 'cod' ? 'CASH ON DELIVERY' : 'PREPAID'}
                         </li>
-                        <li className={`uppercase mt-1 border-t border-green-900 pt-1 ${order.customerInfo?.easyReturnEnabled ? 'text-white' : 'text-gray-500'}`}>
-                          RTN_POLICY: {order.customerInfo?.easyReturnEnabled ? 'ENABLED (+29 RS)' : 'DISABLED'}
+                        <li className={`uppercase mt-1 border-t border-blue-900 pt-1 font-bold ${order.customerInfo?.easyReturnEnabled ? 'text-green-500' : 'text-blue-700'}`}>
+                          Return Policy: {order.customerInfo?.easyReturnEnabled ? 'ENABLED (+29 RS)' : 'DISABLED'}
                         </li>
                       </ul>
                     </div>
 
-                    <p className="font-mono text-xs font-bold uppercase border-b-2 border-dashed border-gray-400 pb-1 mb-2">&gt; ITEMS_MANIFEST</p>
-                    <ul className="space-y-2 font-mono">
+                    <p className="text-xs font-bold uppercase border-b-2 border-dashed border-blue-900 pb-1 mb-2 text-blue-500">Items</p>
+                    <ul className="space-y-2 font-sans">
                       {order.items.map((item, idx) => (
-                        <li key={idx} className="flex gap-4 text-sm bg-white border border-gray-300 p-2 shadow-sm">
+                        <li key={idx} className="flex gap-4 text-sm bg-black border border-blue-900 p-2">
                           {item.imageUrl && (
                             <div className="shrink-0">
-                              <img src={item.imageUrl} alt={item.name} className="w-16 h-16 object-cover border border-gray-400" onError={(e) => {
+                              <img src={item.imageUrl} alt={item.name} className="w-16 h-16 object-cover border border-blue-800" onError={(e) => {
                                   (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=800&auto=format&fit=crop";
                               }}/>
                             </div>
                           )}
                           <div className="flex-1 flex flex-col justify-center">
-                            <span className="font-bold text-gray-900 uppercase text-sm leading-tight">{item.quantity} x {item.name}</span>
-                            <div className="text-[10px] sm:text-xs text-gray-600 mt-2 flex flex-wrap gap-1 sm:gap-2">
-                              {item.selectedSize && <span className="bg-gray-200 px-1 border border-gray-400 font-bold">SZ:{item.selectedSize}</span>}
-                              {item.smartphoneModel && <span className="bg-gray-200 px-1 border border-gray-400 font-bold">MDL:{item.smartphoneModel}</span>}
-                              <span className="bg-gray-200 px-1 border border-gray-400 font-bold">PRC:{formatPrice(item.cartPrice)}</span>
+                            <span className="font-bold text-blue-200 uppercase text-sm leading-tight">{item.quantity} x {item.name}</span>
+                            <div className="text-[10px] sm:text-xs text-blue-400 mt-2 flex flex-wrap gap-1 sm:gap-2">
+                              {item.selectedSize && <span className="bg-blue-900/50 px-1 border border-blue-800 font-bold">Size: {item.selectedSize}</span>}
+                              {item.smartphoneModel && <span className="bg-blue-900/50 px-1 border border-blue-800 font-bold">Model: {item.smartphoneModel}</span>}
+                              <span className="bg-blue-900/50 px-1 border border-blue-800 font-bold">{formatPrice(item.cartPrice)}</span>
                             </div>
                           </div>
                         </li>
                       ))}
                     </ul>
                     
-                    <div className="mt-4 flex justify-end border-t-2 border-gray-300 pt-4">
+                    <div className="mt-4 flex justify-end border-t-2 border-blue-900 pt-4">
                       <button 
                         onClick={() => {
-                          if (window.confirm("PURGE THIS ORDER FROM SYSTEM MEMORY?")) {
+                          if (window.confirm("Delete this order permanently to free up storage space?")) {
                             deleteOrder(order.id);
                           }
                         }}
-                        className="flex items-center gap-2 px-3 py-1 bg-red-100 text-red-700 border border-red-300 hover:bg-red-600 hover:text-white transition-colors text-xs uppercase font-bold font-mono"
+                        className="flex items-center gap-2 px-3 py-1 bg-red-900/20 text-red-500 border border-red-900/50 hover:bg-red-600 hover:text-white transition-colors text-xs uppercase font-bold"
                       >
-                        <Trash2 size={14} /> PURGE_RECORD
+                        <Trash2 size={14} /> Delete Order
                       </button>
                     </div>
                   </div>
                   
-                  <div className="bg-gray-200 flex flex-col gap-2 min-w-[200px] border-t border-gray-400 md:border-t-0 md:border-l p-5">
-                    <p className="font-bold font-mono uppercase text-xs text-gray-600 mb-1 border-b border-gray-300 pb-2">Status_UPDATE()</p>
+                  <div className="bg-gray-900 flex flex-col gap-2 min-w-[200px] border-t border-blue-900 md:border-t-0 md:border-l p-5">
+                    <p className="font-bold uppercase text-xs text-blue-600 mb-1 border-b border-blue-900 pb-2">Fulfillment Status</p>
                     <button 
                       onClick={() => updateOrderStatus(order.id, 'pending')}
-                      className={`flex items-center gap-2 p-2 font-bold font-mono uppercase text-xs border transition-colors ${
+                      className={`flex items-center gap-2 p-2 font-bold uppercase text-xs border transition-colors ${
                         order.status === 'pending' 
-                          ? 'bg-yellow-300 border-yellow-600 text-yellow-900 shadow-[2px_2px_0px_#a16207]' 
-                          : 'bg-white border-gray-400 hover:bg-gray-100 text-gray-700'
+                          ? 'bg-yellow-900/30 border-yellow-600 text-yellow-500 shadow-[2px_2px_0px_#ca8a04]' 
+                          : 'bg-black border-blue-900 hover:bg-blue-900/20 text-blue-500'
                       }`}
                     >
-                      <Clock size={14} /> PENDING
+                      <Clock size={14} /> Pending
                     </button>
                     <button 
                       onClick={() => updateOrderStatus(order.id, 'shipped')}
-                      className={`flex items-center gap-2 p-2 font-bold font-mono uppercase text-xs border transition-colors ${
+                      className={`flex items-center gap-2 p-2 font-bold uppercase text-xs border transition-colors ${
                         order.status === 'shipped' 
-                          ? 'bg-blue-300 border-blue-600 text-blue-900 shadow-[2px_2px_0px_#1d4ed8]' 
-                          : 'bg-white border-gray-400 hover:bg-gray-100 text-gray-700'
+                          ? 'bg-blue-900/30 border-blue-500 text-blue-400 shadow-[2px_2px_0px_#3b82f6]' 
+                          : 'bg-black border-blue-900 hover:bg-blue-900/20 text-blue-500'
                       }`}
                     >
-                      <Truck size={14} /> SHIPPED
+                      <Truck size={14} /> Shipped
                     </button>
                     <button 
                       onClick={() => updateOrderStatus(order.id, 'delivered')}
-                      className={`flex items-center gap-2 p-2 font-bold font-mono uppercase text-xs border transition-colors ${
+                      className={`flex items-center gap-2 p-2 font-bold uppercase text-xs border transition-colors ${
                         order.status === 'delivered' 
-                          ? 'bg-green-300 border-green-600 text-green-900 shadow-[2px_2px_0px_#166534]' 
-                          : 'bg-white border-gray-400 hover:bg-gray-100 text-gray-700'
+                          ? 'bg-green-900/30 border-green-600 text-green-500 shadow-[2px_2px_0px_#16a34a]' 
+                          : 'bg-black border-blue-900 hover:bg-blue-900/20 text-blue-500'
                       }`}
                     >
-                      <CheckCircle2 size={14} /> DELIVERED
+                      <CheckCircle2 size={14} /> Delivered
                     </button>
                   </div>
                 </div>
@@ -675,6 +673,7 @@ export function Admin() {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 }
