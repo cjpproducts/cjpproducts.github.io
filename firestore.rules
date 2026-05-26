@@ -16,7 +16,7 @@ service cloud.firestore {
       return data.keys().hasAll(['id', 'name', 'category', 'price', 'description', 'imageUrl', 'createdAt'])
         && data.id is string && data.id.size() <= 128
         && data.name is string && data.name.size() > 0 && data.name.size() <= 200
-        && data.category in ['t-shirt', 'mobile-cover', 'other']
+        && data.category in ['t-shirt', 'mobile-cover', 'books', 'other']
         && data.price is number && data.price >= 0
         && (!data.keys().hasAny(['tShirtPrices']) || data.tShirtPrices is map)
         && data.description is string && data.description.size() <= 5000

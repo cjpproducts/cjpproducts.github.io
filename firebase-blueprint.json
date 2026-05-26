@@ -9,6 +9,11 @@
           "type": "string",
           "description": "The unique identifier of the product."
         },
+        "category": {
+          "type": "string",
+          "enum": ["t-shirt", "mobile-cover", "books", "other"],
+          "description": "The category classification of the product."
+        },
         "name": {
           "type": "string",
           "description": "The name of the product."
@@ -16,6 +21,10 @@
         "price": {
           "type": "number",
           "description": "The price of the product in INR."
+        },
+        "tShirtPrices": {
+          "type": "object",
+          "description": "Optional custom pricing per shirt size."
         },
         "description": {
           "type": "string",
@@ -30,7 +39,7 @@
           "description": "Timestamp when this product was published."
         }
       },
-      "required": ["id", "name", "price", "description", "imageUrl", "createdAt"]
+      "required": ["id", "category", "name", "price", "description", "imageUrl", "createdAt"]
     },
     "Order": {
       "title": "Order",
