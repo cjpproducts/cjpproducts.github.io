@@ -166,6 +166,11 @@ export function Admin() {
     linkElement.click();
   };
 
+  const [localProductsSold, setLocalProductsSold] = useState(productsSold.toString());
+  React.useEffect(() => {
+    setLocalProductsSold(productsSold.toString());
+  }, [productsSold]);
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-[calc(100vh-80px)] flex flex-col items-center justify-center bg-cjp-light px-4 py-12">
@@ -272,90 +277,113 @@ export function Admin() {
       {activeTab === "inventory" && (
         <div className="grid md:grid-cols-2 gap-12">
           <div className="flex flex-col gap-6">
-            <div className="bg-white border-4 border-cjp-dark p-6 shadow-[8px_8px_0px_#1a1a1a]">
-              <h2 className="font-mono text-xl font-bold uppercase mb-4 text-gray-900 border-b-2 border-dashed border-gray-400 pb-2">
-                &gt; SYSTEM_STATS
+            <div className="bg-black text-green-400 border-2 border-green-500 p-6 shadow-[8px_8px_0px_#1a1a1a] font-mono">
+              <h2 className="text-xl font-bold uppercase mb-4 border-b-2 border-dashed border-green-800 pb-2 flex items-center gap-2">
+                <span className="animate-pulse">_</span> SYS_STATS_OVERRIDE
               </h2>
-              <div className="flex items-end gap-4">
-                <div className="flex-1">
-                  <label className="font-bold uppercase text-xs block text-gray-600 mb-1">Total Rations Sold</label>
-                  <input
-                    type="number"
-                    value={productsSold}
-                    onChange={(e) => updateProductsSold(parseInt(e.target.value) || 0)}
-                    className="w-full border-2 border-black bg-gray-50 px-4 py-2 font-mono font-bold text-xl focus:outline-none focus:bg-white focus:ring-2 focus:ring-green-400 text-cjp-dark"
-                  />
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                  <label className="font-bold uppercase text-xs text-green-600 w-32">&gt; TOTAL_SOLD :</label>
+                  <div className="flex items-center flex-1 w-full gap-2">
+                    <span className="text-gray-500">[</span>
+                    <input
+                      type="number"
+                      value={localProductsSold}
+                      onChange={(e) => setLocalProductsSold(e.target.value)}
+                      className="flex-1 bg-transparent border-b border-green-800 text-green-400 px-2 py-1 font-bold text-xl focus:outline-none focus:border-green-400 text-center"
+                    />
+                    <span className="text-gray-500">]</span>
+                    <button 
+                      onClick={() => {
+                        const val = parseInt(localProductsSold) || 0;
+                        updateProductsSold(val);
+                      }}
+                      className="ml-2 bg-green-500 text-black font-bold px-3 py-1 text-xs hover:bg-green-400 active:translate-y-[1px] active:translate-x-[1px]"
+                    >
+                      UPDATE
+                    </button>
+                  </div>
                 </div>
+                <p className="text-[10px] text-green-800 uppercase mt-2">* MANUAL OVERRIDE LOGGED IN FIRESTORE.</p>
               </div>
             </div>
 
             {/* ADD PRODUCT FORM */}
-            <div className="bg-white border-4 border-cjp-dark p-6 shadow-[8px_8px_0px_#ff4500]">
-          <h2 className="font-display text-3xl uppercase mb-6 flex items-center gap-2 border-b-2 border-dashed border-gray-300 pb-3">
-            <PackagePlus /> Issue New Ration
+            <div className="bg-white border-2 border-black p-6 shadow-[8px_8px_0px_#1a1a1a] font-mono">
+          <h2 className="text-xl uppercase font-bold mb-6 flex items-center gap-3 border-b-2 border-dashed border-gray-400 pb-3">
+            <PackagePlus /> &gt; INJECT_NEW_RATION
           </h2>
           
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-5 text-sm">
             <div className="space-y-1">
-              <label className="font-bold uppercase text-sm block">Designation (Product Name)</label>
-              <input 
-                type="text" 
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                className="w-full border-2 border-cjp-dark bg-cjp-light px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cjp-accent"
-                placeholder="e.g. Resistance Banner"
-              />
+              <label className="font-bold uppercase text-xs text-gray-500 block">&gt; DESIGNATION</label>
+              <div className="flex items-center gap-2 border border-gray-400 bg-gray-50 px-3 py-2">
+                <span className="text-gray-400">$</span>
+                <input 
+                  type="text" 
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  className="w-full bg-transparent focus:outline-none font-bold placeholder-gray-300"
+                  placeholder="ITEM_NAME_HERE"
+                />
+              </div>
             </div>
 
             <div className="space-y-1">
-              <label className="font-bold uppercase text-sm block">Category</label>
-              <select 
-                value={category}
-                onChange={(e) => setCategory(e.target.value as import("../types").ProductCategory)}
-                className="w-full border-2 border-cjp-dark bg-cjp-light px-4 py-3 font-bold uppercase focus:outline-none focus:ring-2 focus:ring-cjp-accent cursor-pointer"
-              >
-                <option value="other">Other Merchandise</option>
-                <option value="t-shirt">T-Shirt (Sized)</option>
-                <option value="mobile-cover">Mobile Cover</option>
-              </select>
+              <label className="font-bold uppercase text-xs text-gray-500 block">&gt; CATEGORY_CLASS</label>
+              <div className="flex items-center gap-2 border border-gray-400 bg-gray-50 px-3 py-2">
+                <span className="text-gray-400">$</span>
+                <select 
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value as import("../types").ProductCategory)}
+                  className="w-full bg-transparent font-bold focus:outline-none cursor-pointer appearance-none"
+                >
+                  <option value="other">[01] GENERIC_MERCH</option>
+                  <option value="t-shirt">[02] APPAREL_TSHIRT</option>
+                  <option value="mobile-cover">[03] TECH_SHIELD</option>
+                </select>
+              </div>
             </div>
             
             {category === "t-shirt" ? (
-              <div className="space-y-2 border-2 border-dashed border-gray-300 p-4">
-                <label className="font-bold uppercase text-sm block mb-2">Pricing by Size (INR)</label>
+              <div className="space-y-3 border border-dashed border-gray-400 p-4 bg-gray-50">
+                <label className="font-bold uppercase text-xs text-gray-500 block">&gt; PRICING_MATRIX (INR)</label>
                 {(["S", "M", "L", "XL", "XXL"] as import("../types").Size[]).map((size) => (
-                  <div key={size} className="flex items-center gap-4">
-                    <span className="font-bold text-gray-700 w-8">{size}:</span>
+                  <div key={size} className="flex items-center gap-4 border-b border-gray-200 pb-2">
+                    <span className="font-bold text-gray-700 w-8">[{size}]</span>
                     <input 
                       type="number"
                       value={tShirtPrices[size] || ""}
                       onChange={(e) => setTShirtPrices(prev => ({ ...prev, [size]: e.target.value ? Number(e.target.value) : undefined }))}
                       min="0"
-                      className="flex-1 border-2 border-cjp-dark bg-cjp-light px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cjp-accent"
-                      placeholder={`Price for ${size}`}
+                      className="flex-1 bg-transparent border-none text-sm focus:outline-none focus:ring-0 font-bold"
+                      placeholder="ENTER_VAL"
                     />
                   </div>
                 ))}
               </div>
             ) : (
               <div className="space-y-1">
-                <label className="font-bold uppercase text-sm block">Contribution Amount (Base Price INR)</label>
-                <input 
-                  type="number" 
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                  required
-                  min="0"
-                  step="1"
-                  className="w-full border-2 border-cjp-dark bg-cjp-light px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cjp-accent"
-                  placeholder="e.g. 500"
-                />
+                <label className="font-bold uppercase text-xs text-gray-500 block">&gt; BASE_CONTRIBUTION (INR)</label>
+                <div className="flex items-center gap-2 border border-gray-400 bg-gray-50 px-3 py-2">
+                  <span className="text-gray-400">$</span>
+                  <input 
+                    type="number" 
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    required
+                    min="0"
+                    step="1"
+                    className="w-full bg-transparent font-bold focus:outline-none"
+                    placeholder="AMOUNT"
+                  />
+                </div>
               </div>
             )}
             
             <div className="space-y-1">
-              <label className="font-bold uppercase text-sm block">Visual Propaganda (Image Upload)</label>
+              <label className="font-bold uppercase text-xs text-gray-500 block">&gt; VISUAL_ASSET</label>
               
               {/* Drag and Drop Zone */}
               <div 
@@ -363,9 +391,9 @@ export function Admin() {
                 onDragOver={handleDrag}
                 onDragLeave={handleDrag}
                 onDrop={handleDrop}
-                className={`relative border-2 border-dashed ${
-                  dragActive ? "border-cjp-accent bg-amber-50" : "border-cjp-dark bg-cjp-light"
-                } p-6 text-center transition-all flex flex-col items-center justify-center min-h-[160px] group cursor-pointer hover:border-cjp-accent`}
+                className={`relative border border-dashed ${
+                  dragActive ? "border-green-500 bg-green-50" : "border-gray-400 bg-gray-50"
+                } p-6 text-center transition-all flex flex-col items-center justify-center min-h-[160px] cursor-pointer hover:border-black`}
                 onClick={() => document.getElementById("file-upload")?.click()}
               >
                 <input 
@@ -377,53 +405,53 @@ export function Admin() {
                 />
                 
                 {imageUrl ? (
-                  <div className="space-y-3 w-full flex flex-col items-center" onClick={(e) => e.stopPropagation()}>
+                  <div className="space-y-4 w-full flex flex-col items-center" onClick={(e) => e.stopPropagation()}>
                     <img 
                       src={imageUrl} 
                       alt="Preview" 
-                      className="max-h-32 object-contain border-2 border-cjp-dark shadow-[4px_4px_0px_#1a1a1a]"
+                      className="max-h-32 object-cover border border-black shadow-[4px_4px_0px_#1a1a1a]"
                     />
                     <div className="flex gap-2">
-                      <button
+                       <button
                         type="button"
                         onClick={() => setImageUrl("")}
-                        className="bg-red-600 text-white font-bold text-xs uppercase px-3 py-1.5 shadow-[2px_2px_0px_#000] hover:bg-red-700 transition-colors cursor-pointer"
+                        className="bg-black text-red-500 font-bold text-[10px] uppercase px-3 py-1.5 shadow-[2px_2px_0px_#ef4444] transition-colors cursor-pointer border border-red-500"
                       >
-                        Remove Image
+                        [ DEL_ASSET ]
                       </button>
                       <button
                         type="button"
                         onClick={() => document.getElementById("file-upload")?.click()}
-                        className="bg-cjp-dark text-white font-bold text-xs uppercase px-3 py-1.5 shadow-[2px_2px_0px_#ff4500] hover:bg-cjp-accent transition-colors cursor-pointer"
+                        className="bg-black text-green-400 font-bold text-[10px] uppercase px-3 py-1.5 shadow-[2px_2px_0px_#4ade80] transition-colors cursor-pointer border border-green-500"
                       >
-                        Change Image
+                        [ REPLACE_ASSET ]
                       </button>
                     </div>
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center space-y-2 pointer-events-none">
-                    <Upload className="text-gray-500 group-hover:text-cjp-accent transition-colors" size={32} />
-                    <p className="font-bold text-sm uppercase">Drag & Drop Image or Click to Browse</p>
-                    <p className="text-xs text-gray-500">Supports PNG, JPG, GIF, WEBP</p>
+                    <Upload className="text-gray-400" size={24} />
+                    <p className="font-bold text-xs uppercase text-gray-600">INPUT_STREAM_AWAIT: IMAGE</p>
+                    <p className="text-[10px] text-gray-500">DND || CLICK. ALLOW: PNG,JPG,WEBP</p>
                   </div>
                 )}
               </div>
 
               {/* URL fallback */}
               <div className="pt-2">
-                <span className="text-xs font-bold text-gray-500 uppercase">Or provide a web URL manually:</span>
+                <span className="text-[10px] font-bold text-gray-500 uppercase">&gt; OVERRIDE_URI:</span>
                 <div className="relative mt-1">
-                  <ImagePlus className="absolute left-3 top-3.5 text-gray-400" size={20} />
+                  <ImagePlus className="absolute left-3 top-2.5 text-gray-400" size={16} />
                   <input 
                     type="url" 
                     value={imageUrl.startsWith("data:") ? "" : imageUrl}
                     onChange={(e) => setImageUrl(e.target.value)}
-                    className="w-full border-2 border-cjp-dark bg-cjp-light pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-cjp-accent text-sm"
-                    placeholder="https://..."
+                    className="w-full border border-gray-400 bg-gray-50 pl-10 pr-4 py-2 focus:outline-none font-bold focus:border-black text-xs"
+                    placeholder="https://"
                   />
                   {imageUrl.startsWith("data:") && (
-                    <span className="absolute right-3 top-2.5 text-xs bg-green-100 text-green-800 font-bold px-2 py-1 border border-green-500">
-                      Uploaded File Active
+                    <span className="absolute right-3 top-2 text-[10px] text-green-600 font-bold">
+                      LOCAL_BLOB
                     </span>
                   )}
                 </div>
@@ -431,46 +459,45 @@ export function Admin() {
             </div>
 
             <div className="space-y-1">
-              <label className="font-bold uppercase text-sm block">Manifesto (Description)</label>
+              <label className="font-bold uppercase text-xs text-gray-500 block">&gt; MANIFESTO_TEXT</label>
               <textarea 
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 required
-                rows={4}
-                className="w-full border-2 border-cjp-dark bg-cjp-light px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cjp-accent resize-none"
-                placeholder="Describe the utility of this item in the revolution..."
+                rows={3}
+                className="w-full border border-gray-400 bg-gray-50 px-3 py-2 font-bold focus:outline-none focus:border-black resize-none"
+                placeholder="PROCEED_WITH_PROPAGANDA..."
               />
             </div>
 
             {submitSuccess && (
-              <div className="border-4 border-green-500 bg-green-50 text-green-800 p-4 font-bold uppercase text-xs flex flex-col gap-1 items-center justify-center animate-bounce shadow-[4px_4px_0px_#10b981]">
-                <span>✓ Propaganda Published Successfully!</span>
-                <span className="text-[10px] text-green-600">The masses can now view and purchase this ration all over the world.</span>
+              <div className="border border-green-500 bg-black text-green-400 p-3 font-bold uppercase text-xs flex items-center justify-center shadow-[4px_4px_0px_#4ade80]">
+                <span>[ OK ] DATA_INJECTED_SUCCESSFULLY</span>
               </div>
             )}
 
             {submitError && (
-              <div className="border-4 border-red-500 bg-red-50 text-red-800 p-4 font-bold uppercase text-xs text-center shadow-[4px_4px_0px_#ef4444]">
-                ⚠ Blocked: {submitError}
+              <div className="border border-red-500 bg-black text-red-500 p-3 font-bold uppercase text-xs text-center shadow-[4px_4px_0px_#ef4444]">
+                [ ERR ] {submitError}
               </div>
             )}
 
             <button 
               type="submit"
               disabled={isSubmitting}
-              className={`w-full font-display uppercase text-2xl py-4 transition-all shadow-[4px_4px_0px_#000] active:translate-y-1 active:translate-x-1 active:shadow-none cursor-pointer flex items-center justify-center gap-2 ${
+              className={`w-full font-bold uppercase text-lg py-3 transition-all cursor-pointer flex items-center justify-center gap-2 border-2 border-black ${
                 isSubmitting 
-                  ? "bg-gray-400 text-gray-700 cursor-not-allowed shadow-none translate-y-1 translate-x-1" 
-                  : "bg-cjp-dark text-white hover:bg-cjp-accent"
+                  ? "bg-gray-200 text-gray-500 cursor-not-allowed" 
+                  : "bg-black text-white hover:text-green-400 shadow-[4px_4px_0px_#1a1a1a] active:translate-y-1 active:translate-x-1 active:shadow-none"
               }`}
             >
               {isSubmitting ? (
                 <>
-                  <span className="h-5 w-5 border-4 border-white border-t-transparent rounded-full animate-spin"></span>
-                  Publishing...
+                  <span className="h-4 w-4 border-2 border-gray-500 border-t-transparent rounded-full animate-spin"></span>
+                  UPLOADING...
                 </>
               ) : (
-                "Publish to Masses"
+                "EXECUTE_DEPLOYMENT"
               )}
             </button>
           </form>
@@ -479,46 +506,46 @@ export function Admin() {
 
         {/* INVENTORY LIST */}
         <div className="space-y-6">
-          <div className="flex items-center justify-between border-b-4 border-cjp-dark pb-3">
-            <h2 className="font-display text-3xl uppercase flex items-center gap-2">
-              Current Inventory ({products.length})
+          <div className="flex items-center justify-between border-b-2 border-dashed border-gray-400 pb-3">
+            <h2 className="font-mono text-xl font-bold uppercase flex items-center gap-2 text-gray-900">
+              &gt; MEM_BANKS ({products.length})
             </h2>
             <button
               onClick={handleExportJSON}
-              className="flex items-center gap-2 bg-gray-200 hover:bg-gray-300 border-2 border-cjp-dark font-bold uppercase px-3 py-2 text-sm transition-colors shadow-[2px_2px_0px_#1a1a1a] active:translate-y-0.5 active:translate-x-0.5 active:shadow-none"
+              className="flex items-center gap-2 bg-black text-white hover:text-green-400 font-mono font-bold uppercase text-[10px] px-3 py-1.5 transition-colors shadow-[2px_2px_0px_#4ade80] active:translate-y-[1px] active:translate-x-[1px] active:shadow-none"
             >
-              <Download size={18} />
-              Export JSON
+              <Download size={14} />
+              DUMP_MEM
             </button>
           </div>
           
-          <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+          <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar font-mono">
             {products.length === 0 ? (
-              <p className="text-gray-500 italic p-4 text-center border-2 border-dashed border-gray-400">Inventory depleted. Restock immediately.</p>
+              <p className="text-gray-500 p-4 text-center border-2 border-dashed border-gray-400 font-bold uppercase text-xs">MEMORY_BANKS_EMPTY</p>
             ) : (
               products.map((product) => (
-                <div key={product.id} className="flex gap-4 bg-white border-2 border-cjp-dark p-3">
+                <div key={product.id} className="flex gap-4 bg-gray-50 border border-gray-400 shadow-[2px_2px_0px_#1a1a1a] p-3">
                   <img 
                     src={product.imageUrl} 
                     alt={product.name}
-                    className="w-20 h-20 object-cover border border-gray-300"
+                    className="w-16 h-16 object-cover border border-gray-400"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=800&auto=format&fit=crop";
                     }}
                   />
                   <div className="flex-1 flex flex-col justify-center">
-                    <h3 className="font-bold uppercase leading-tight line-clamp-1">{product.name}</h3>
-                    <p className="text-cjp-accent font-display text-xl">{formatPrice(product.price)}</p>
+                    <h3 className="font-bold uppercase text-sm leading-tight text-gray-900 line-clamp-1">{product.name}</h3>
+                    <p className="text-gray-500 text-xs mt-1">VAL: {formatPrice(product.price)}</p>
                   </div>
                   <button 
                     onClick={() => {
-                      if (window.confirm("Discontinue this item?")) {
+                      if (window.confirm("PURGE ITEM FROM SYSTEM?")) {
                         removeProduct(product.id);
                       }
                     }}
-                    className="p-3 bg-gray-100 border-2 border-transparent hover:border-cjp-dark hover:bg-red-50 text-gray-500 hover:text-red-600 transition-all cursor-pointer flex flex-col justify-center h-full self-center ml-2"
+                    className="p-2 bg-red-100 flex items-center justify-center text-red-600 hover:bg-red-500 hover:text-white transition-colors cursor-pointer border border-red-300"
                   >
-                    <Trash2 size={24} />
+                    <Trash2 size={18} />
                   </button>
                 </div>
               ))
