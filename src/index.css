@@ -13,4 +13,11 @@
 body {
   background-color: var(--color-cjp-light);
   color: var(--color-cjp-dark);
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+html {
+  overflow-x: hidden;
+  max-width: 100vw;
 }

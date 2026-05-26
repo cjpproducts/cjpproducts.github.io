@@ -232,9 +232,9 @@ export function Admin() {
   }
 
   return (
-    <div className="bg-black min-h-screen w-full overflow-x-hidden">
-      <div className="container mx-auto px-4 py-12 max-w-6xl">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 border-b-4 border-blue-900 pb-6">
+    <div className="bg-black min-h-screen w-full w-screen max-w-full overflow-hidden flex flex-col">
+      <div className="w-full max-w-[100vw] mx-auto px-3 sm:px-4 py-6 sm:py-12 md:max-w-6xl overflow-hidden sm:overflow-visible">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 border-b-4 border-blue-900 pb-6 w-full">
           <div className="flex items-center gap-4">
             <div className="bg-blue-600 text-black p-3 shadow-[4px_4px_0px_#000000] border border-blue-800">
               <AlertOctagon size={40} className="text-black" />
