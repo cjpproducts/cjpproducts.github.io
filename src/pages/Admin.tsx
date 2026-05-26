@@ -63,7 +63,7 @@ export function Admin() {
       setAuthError("");
       setPin("");
     } else {
-      setAuthError("Incorrect Security PIN. Enter your device's current browser time as digits (e.g. 9:27 = 927. No colons).");
+      setAuthError("Incorrect Security PIN. Access denied.");
     }
   };
 
@@ -279,22 +279,16 @@ export function Admin() {
           ) : (
             <>
               <p className="text-blue-600 font-bold uppercase text-[10px] sm:text-xs tracking-wider mb-8">
-                Step 2 of 2: Dynamic Time PIN Challenge
+                Step 2 of 2: Security Verification
               </p>
               
               <form onSubmit={handlePinSubmit} className="space-y-6 text-left">
                 <div className="space-y-2">
                   <label className="font-bold uppercase text-[10px] sm:text-xs tracking-wider text-blue-500 block">
-                    Enter Current 12-Hour Time PIN
+                    Security PIN
                   </label>
-                  <div className="p-3 bg-gray-950 border border-blue-955 text-gray-400 font-mono text-[10px] md:text-xs leading-relaxed uppercase space-y-1 rounded-sm select-none">
-                    <div>Your browser's local time as digits.</div>
-                    <div className="text-blue-400 text-[9px] font-bold">
-                      Format: HMM or HHMM (e.g., 9:27 is 927 | 11:12 is 1112 | 12:05 is 1205)
-                    </div>
-                  </div>
                   <input 
-                    type="text" 
+                    type="password" 
                     pattern="\d*"
                     maxLength={4}
                     value={pin}
@@ -304,7 +298,7 @@ export function Admin() {
                     }}
                     required
                     className="w-full border border-blue-900 bg-gray-900 px-4 py-3 font-mono font-bold focus:outline-none focus:ring-2 focus:ring-blue-600 text-center text-lg sm:text-2xl tracking-widest text-blue-200 shadow-[4px_4px_0px_#000]"
-                    placeholder="e.g. 927"
+                    placeholder="••••"
                   />
                 </div>
 
