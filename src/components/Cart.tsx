@@ -1,4 +1,4 @@
-import { X, Trash2, Plus, Minus, ShoppingBag, ArrowLeft } from "lucide-react";
+import { X, Trash2, Plus, Minus, ShoppingBag, ArrowLeft, CheckCircle2, AlertOctagon } from "lucide-react";
 import { useShop } from "../context/ShopContext";
 import { formatPrice, cn } from "../lib/utils";
 import { motion, AnimatePresence } from "motion/react";
@@ -16,6 +16,10 @@ export function Cart() {
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "prepaid">("cod");
   const [easyReturn, setEasyReturn] = useState(false);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [orderSuccess, setOrderSuccess] = useState(false);
+
   if (!isCartOpen) return null;
 
   const finalTotal = cartTotal + (easyReturn ? 29 : 0);
@@ -23,31 +27,51 @@ export function Cart() {
   const handleCheckoutSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !phone || !address || !pincode) {
-      alert("Please fill out all required fields.");
+      setErrorMessage("Please fill out all required fields.");
       return;
     }
-    await placeOrder(cart, finalTotal, {
-      name,
-      phone,
-      whatsapp,
-      address,
-      pincode,
-      paymentMethod,
-      easyReturnEnabled: easyReturn,
-    });
-    alert("Order placed! Long live the Cockroach Janta Party!");
-    setCheckoutStep(false);
-    setName("");
-    setPhone("");
-    setWhatsapp("");
-    setAddress("");
-    setPincode("");
-    setEasyReturn(false);
+    
+    setIsSubmitting(true);
+    setErrorMessage("");
+
+    try {
+      await placeOrder(cart, finalTotal, {
+        name,
+        phone,
+        whatsapp,
+        address,
+        pincode,
+        paymentMethod,
+        easyReturnEnabled: easyReturn,
+      });
+      setOrderSuccess(true);
+      setCheckoutStep(false);
+      setName("");
+      setPhone("");
+      setWhatsapp("");
+      setAddress("");
+      setPincode("");
+      setEasyReturn(false);
+    } catch (err: any) {
+      console.error("Order submission failed:", err);
+      let errMsg = "Unable to process order. Please check your credentials.";
+      try {
+        const parsed = JSON.parse(err.message);
+        errMsg = parsed.error || errMsg;
+      } catch {
+        errMsg = err.message || errMsg;
+      }
+      setErrorMessage(errMsg);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleClose = () => {
     setIsCartOpen(false);
     setCheckoutStep(false);
+    setErrorMessage("");
+    setOrderSuccess(false);
   };
 
   return (
@@ -85,7 +109,26 @@ export function Cart() {
               </button>
             </div>
 
-            {!checkoutStep ? (
+            {orderSuccess ? (
+              <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-white space-y-6 overflow-y-auto">
+                <div className="bg-green-100 text-green-600 p-6 rounded-full border-4 border-cjp-dark shadow-[4px_4px_0px_#1a1a1a]">
+                  <CheckCircle2 size={56} />
+                </div>
+                <h3 className="font-display text-3xl uppercase text-cjp-dark">Receipt Authenticated!</h3>
+                <p className="font-bold text-gray-700 max-w-xs uppercase text-xs leading-relaxed">
+                  Your revolutionary contribution has been officially logged in the survival database catalog.
+                </p>
+                <div className="w-full bg-cjp-light border-4 border-cjp-dark p-4 font-mono text-xs uppercase font-bold text-gray-600 shadow-[4px_4px_0px_#ff4500] tracking-wider text-center">
+                  Long live Cockroach Janta Party!
+                </div>
+                <button
+                  onClick={handleClose}
+                  className="w-full py-4 mt-6 bg-cjp-accent text-white font-display text-2xl uppercase hover:bg-cjp-dark transition-colors shadow-[4px_4px_0px_#1a1a1a] active:translate-y-1 active:translate-x-1 active:shadow-none"
+                >
+                  Close Dispatch Terminal
+                </button>
+              </div>
+            ) : !checkoutStep ? (
               <>
                 <div className="flex-1 overflow-y-auto p-6 space-y-6">
                   {cart.length === 0 ? (
@@ -108,7 +151,7 @@ export function Cart() {
                           <p className="font-display text-cjp-accent text-xl mt-1">{formatPrice(item.cartPrice)}</p>
                           
                           <div className="flex items-center gap-4 mt-auto pt-2">
-                            <div className="flex items-center border-2 border-cjp-dark w-fit bg-cjp-light">
+                             <div className="flex items-center border-2 border-cjp-dark w-fit bg-cjp-light">
                               <button 
                                 onClick={() => updateCartQuantity(item.cartItemId, item.quantity - 1)}
                                 className="p-1 hover:bg-cjp-dark hover:text-white transition-colors"
@@ -154,11 +197,19 @@ export function Cart() {
             ) : (
               <form onSubmit={handleCheckoutSubmit} className="flex-1 overflow-y-auto flex flex-col">
                 <div className="p-6 space-y-5 flex-1">
+                  {errorMessage && (
+                    <div className="bg-red-50 text-red-600 border-2 border-red-500 p-4 font-bold uppercase text-xs flex items-center gap-3">
+                      <AlertOctagon className="shrink-0" size={20} />
+                      <span>{errorMessage}</span>
+                    </div>
+                  )}
+
                   <div className="space-y-1">
                     <label className="font-bold uppercase text-sm block">Name *</label>
                     <input 
                       required type="text" value={name} onChange={(e) => setName(e.target.value)}
-                      className="w-full border-2 border-cjp-dark bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cjp-accent"
+                      disabled={isSubmitting}
+                      className="w-full border-2 border-cjp-dark bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cjp-accent disabled:opacity-50"
                       placeholder="Full Name"
                     />
                   </div>
@@ -166,7 +217,8 @@ export function Cart() {
                     <label className="font-bold uppercase text-sm block">Phone Number *</label>
                     <input 
                       required type="tel" value={phone} onChange={(e) => setPhone(e.target.value)}
-                      className="w-full border-2 border-cjp-dark bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cjp-accent"
+                      disabled={isSubmitting}
+                      className="w-full border-2 border-cjp-dark bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cjp-accent disabled:opacity-50"
                       placeholder="10-digit number"
                     />
                   </div>
@@ -174,7 +226,8 @@ export function Cart() {
                     <label className="font-bold uppercase text-sm block">WhatsApp Number</label>
                     <input 
                       type="tel" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)}
-                      className="w-full border-2 border-cjp-dark bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cjp-accent"
+                      disabled={isSubmitting}
+                      className="w-full border-2 border-cjp-dark bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cjp-accent disabled:opacity-50"
                       placeholder="Optional"
                     />
                   </div>
@@ -182,7 +235,8 @@ export function Cart() {
                     <label className="font-bold uppercase text-sm block">Delivery Address *</label>
                     <textarea 
                       required rows={3} value={address} onChange={(e) => setAddress(e.target.value)}
-                      className="w-full border-2 border-cjp-dark bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cjp-accent resize-none"
+                      disabled={isSubmitting}
+                      className="w-full border-2 border-cjp-dark bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cjp-accent resize-none disabled:opacity-50"
                       placeholder="Street, Area, City"
                     />
                   </div>
@@ -190,14 +244,15 @@ export function Cart() {
                     <label className="font-bold uppercase text-sm block">Pin Code *</label>
                     <input 
                       required type="text" value={pincode} onChange={(e) => setPincode(e.target.value)}
-                      className="w-full border-2 border-cjp-dark bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cjp-accent"
+                      disabled={isSubmitting}
+                      className="w-full border-2 border-cjp-dark bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cjp-accent disabled:opacity-50"
                       placeholder="6-digit pin"
                     />
                   </div>
                   <div className="space-y-2 pt-2">
                     <label className="font-bold uppercase text-sm block">Payment Method</label>
                     <label className="flex items-center gap-3 p-3 border-2 border-cjp-dark bg-white cursor-pointer hover:bg-gray-50">
-                      <input type="radio" value="cod" checked={paymentMethod === "cod"} onChange={() => setPaymentMethod("cod")} className="w-5 h-5 accent-cjp-accent" />
+                      <input type="radio" value="cod" checked={paymentMethod === "cod"} onChange={() => setPaymentMethod("cod")} className="w-5 h-5 accent-cjp-accent" disabled={isSubmitting} />
                       <span className="font-bold uppercase">Cash on Delivery</span>
                     </label>
                     <label className="flex items-center gap-3 p-3 border-2 border-gray-300 bg-gray-100 cursor-not-allowed opacity-60">
@@ -210,11 +265,12 @@ export function Cart() {
                   </div>
 
                   <div className="pt-2">
-                    <label className="flex items-center gap-3 p-4 border-2 border-cjp-accent bg-orange-50 cursor-pointer">
+                    <label className={cn("flex items-center gap-3 p-4 border-2 border-cjp-accent bg-orange-50 cursor-pointer", isSubmitting && "opacity-50 cursor-not-allowed")}>
                       <input 
                         type="checkbox" 
                         checked={easyReturn} 
                         onChange={(e) => setEasyReturn(e.target.checked)}
+                        disabled={isSubmitting}
                         className="w-5 h-5 accent-cjp-accent"
                       />
                       <div className="flex flex-col">
@@ -244,9 +300,15 @@ export function Cart() {
                   </div>
                   <button 
                     type="submit"
-                    className="w-full py-4 bg-cjp-accent text-white font-display text-2xl uppercase hover:bg-cjp-dark transition-colors shadow-[4px_4px_0px_#1a1a1a] active:translate-y-1 active:translate-x-1 active:shadow-none"
+                    disabled={isSubmitting}
+                    className={cn(
+                      "w-full py-4 font-display text-2xl uppercase transition-colors shadow-[4px_4px_0px_#1a1a1a] active:translate-y-1 active:translate-x-1 active:shadow-none",
+                      isSubmitting 
+                        ? "bg-gray-400 text-gray-200 cursor-not-allowed border-2 border-gray-500 shadow-none translate-y-0"
+                        : "bg-cjp-accent text-white hover:bg-cjp-dark"
+                    )}
                   >
-                    Submit Contribution
+                    {isSubmitting ? "Submitting..." : "Submit Contribution"}
                   </button>
                 </div>
               </form>

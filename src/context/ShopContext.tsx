@@ -10,7 +10,7 @@ import {
   getDocFromServer,
   getDocs
 } from "firebase/firestore";
-import { db, handleFirestoreError, OperationType } from "../firebase";
+import { db, handleFirestoreError, OperationType, sanitizeForFirestore } from "../firebase";
 
 interface ShopContextType {
   products: Product[];
@@ -192,7 +192,8 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       createdAt: Date.now(),
     };
     try {
-      await setDoc(doc(db, "products", id), newProduct);
+      const sanitizedProduct = sanitizeForFirestore(newProduct);
+      await setDoc(doc(db, "products", id), sanitizedProduct);
     } catch (err) {
       handleFirestoreError(err, OperationType.WRITE, `products/${id}`);
     }
@@ -251,7 +252,8 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       status: "pending",
     };
     try {
-      await setDoc(doc(db, "orders", id), newOrder);
+      const sanitizedOrder = sanitizeForFirestore(newOrder);
+      await setDoc(doc(db, "orders", id), sanitizedOrder);
       clearCart();
     } catch (err) {
       handleFirestoreError(err, OperationType.WRITE, `orders/${id}`);

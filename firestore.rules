@@ -30,7 +30,11 @@ service cloud.firestore {
         && data.items is list && data.items.size() <= 100
         && data.total is number && data.total >= 0
         && data.customerInfo is map
-        && data.customerInfo.keys().hasAll(['name', 'phone', 'whatsapp', 'address', 'pincode', 'paymentMethod'])
+        && data.customerInfo.name is string
+        && data.customerInfo.phone is string
+        && data.customerInfo.address is string
+        && data.customerInfo.pincode is string
+        && data.customerInfo.paymentMethod is string
         && data.date is number
         && data.status in ['pending', 'shipped', 'delivered'];
     }
