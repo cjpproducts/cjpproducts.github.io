@@ -8,6 +8,13 @@
   --color-cjp-dark: #1a1a1a;
   --color-cjp-accent: #ff4500;
   --color-cjp-light: #f5f5f0;
+
+  --animate-marquee: marquee 20s linear infinite;
+
+  @keyframes marquee {
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(-100%, 0, 0); }
+  }
 }
 
 body {

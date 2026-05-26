@@ -181,9 +181,15 @@ export function Cart() {
 
                 {cart.length > 0 && (
                   <div className="p-6 border-t-4 border-cjp-dark bg-white space-y-4">
-                    <div className="flex items-center justify-between font-display text-2xl uppercase">
-                      <span>Total Tax</span>
-                      <span className="text-cjp-accent">{formatPrice(cartTotal)}</span>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between font-bold text-green-600 text-sm uppercase">
+                        <span>Delivery Fee</span>
+                        <span>FREE</span>
+                      </div>
+                      <div className="flex items-center justify-between font-display text-2xl uppercase pt-2 border-t-2 border-gray-100">
+                        <span>Total Tax</span>
+                        <span className="text-cjp-accent">{formatPrice(cartTotal)}</span>
+                      </div>
                     </div>
                     <button 
                       onClick={() => setCheckoutStep(true)}
@@ -286,6 +292,10 @@ export function Cart() {
                     <div className="flex items-center justify-between font-bold text-gray-500 text-sm">
                       <span>Subtotal</span>
                       <span>{formatPrice(cartTotal)}</span>
+                    </div>
+                    <div className="flex items-center justify-between font-bold text-green-600 text-sm uppercase">
+                      <span>Delivery Fee</span>
+                      <span>FREE</span>
                     </div>
                     {easyReturn && (
                       <div className="flex items-center justify-between font-bold text-cjp-accent text-sm">

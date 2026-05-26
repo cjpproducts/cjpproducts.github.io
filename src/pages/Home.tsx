@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { ShieldAlert, TrendingUp, Search } from "lucide-react";
 import { useShop } from "../context/ShopContext";
 import { ProductCard } from "../components/ProductCard";
@@ -8,13 +8,36 @@ export function Home() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<"all" | "t-shirt" | "mobile-cover" | "books" | "other">("all");
+  const [shuffledIds, setShuffledIds] = useState<string[]>([]);
 
-  const filteredProducts = products.filter((product) => {
-    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          product.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = activeCategory === "all" || product.category === activeCategory;
-    return matchesSearch && matchesCategory;
-  });
+  useEffect(() => {
+    setShuffledIds(prev => {
+      const newIds = products.map(p => p.id).filter(id => !prev.includes(id));
+      if (newIds.length > 0) {
+        return [...prev, ...newIds].sort(() => Math.random() - 0.5);
+      }
+      return prev;
+    });
+  }, [products]);
+
+  const filteredProducts = useMemo(() => {
+    const filtered = products.filter((product) => {
+      const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                            product.description.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesCategory = activeCategory === "all" || product.category === activeCategory;
+      return matchesSearch && matchesCategory;
+    });
+
+    if (activeCategory === "all" && shuffledIds.length > 0) {
+      filtered.sort((a, b) => {
+        const indexA = shuffledIds.indexOf(a.id);
+        const indexB = shuffledIds.indexOf(b.id);
+        return (indexA !== -1 ? indexA : Infinity) - (indexB !== -1 ? indexB : Infinity);
+      });
+    }
+
+    return filtered;
+  }, [products, searchQuery, activeCategory, shuffledIds]);
 
   return (
     <div>
