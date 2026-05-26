@@ -5,7 +5,7 @@ import { useShop } from "../context/ShopContext";
 import { formatPrice } from "../lib/utils";
 
 export function Admin() {
-  const { products, addProduct, removeProduct, orders, updateOrderStatus, deleteOrder, productsSold, updateProductsSold } = useShop();
+  const { products, addProduct, removeProduct, orders, updateOrderStatus, deleteOrder, productsSold, updateProductsSold, visitorsCount, updateVisitorsCount } = useShop();
   const [activeTab, setActiveTab] = useState<"inventory" | "orders">("orders");
   
   const [name, setName] = useState("");
@@ -167,9 +167,14 @@ export function Admin() {
   };
 
   const [localProductsSold, setLocalProductsSold] = useState(productsSold.toString());
+  const [localVisitorsCount, setLocalVisitorsCount] = useState(visitorsCount.toString());
   React.useEffect(() => {
     setLocalProductsSold(productsSold.toString());
   }, [productsSold]);
+  
+  React.useEffect(() => {
+    setLocalVisitorsCount(visitorsCount.toString());
+  }, [visitorsCount]);
 
   if (!isAuthenticated) {
     return (
@@ -227,7 +232,7 @@ export function Admin() {
   }
 
   return (
-    <div className="bg-black min-h-screen">
+    <div className="bg-black min-h-screen w-full overflow-x-hidden">
       <div className="container mx-auto px-4 py-12 max-w-6xl">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 border-b-4 border-blue-900 pb-6">
           <div className="flex items-center gap-4">
@@ -247,10 +252,10 @@ export function Admin() {
           </div>
           
           <div className="flex flex-wrap items-center gap-4">
-            <div className="flex border-2 border-blue-900 bg-black p-1">
+            <div className="flex flex-col sm:flex-row border-2 border-blue-900 bg-black p-1 w-full sm:w-auto">
               <button
                 onClick={() => setActiveTab("orders")}
-                className={`px-4 sm:px-6 py-2 font-mono font-bold uppercase text-xs cursor-pointer transition-colors ${
+                className={`px-4 sm:px-6 py-2 font-mono font-bold uppercase text-xs cursor-pointer transition-colors w-full sm:w-auto ${
                   activeTab === "orders" ? "bg-blue-600 text-black shadow-[2px_2px_0px_#1e3a8a]" : "hover:bg-gray-900 text-blue-600"
                 }`}
               >
@@ -258,7 +263,7 @@ export function Admin() {
               </button>
               <button
                 onClick={() => setActiveTab("inventory")}
-                className={`px-4 sm:px-6 py-2 font-mono font-bold uppercase text-xs cursor-pointer transition-colors ${
+                className={`px-4 sm:px-6 py-2 font-mono font-bold uppercase text-xs cursor-pointer transition-colors w-full sm:w-auto ${
                   activeTab === "inventory" ? "bg-blue-600 text-black shadow-[2px_2px_0px_#1e3a8a]" : "hover:bg-gray-900 text-blue-600"
                 }`}
               >
@@ -268,7 +273,7 @@ export function Admin() {
             
             <button
               onClick={handleLogout}
-              className="bg-blue-800 text-white font-mono border-2 border-blue-900 font-bold uppercase px-4 py-2 text-xs shadow-[2px_2px_0px_#000] hover:bg-black hover:text-blue-500 transition-colors cursor-pointer"
+              className="bg-blue-800 text-white font-mono border-2 border-blue-900 font-bold uppercase px-4 py-2 text-xs shadow-[2px_2px_0px_#000] hover:bg-black hover:text-blue-500 transition-colors cursor-pointer w-full sm:w-auto"
             >
               Logout
             </button>
@@ -291,7 +296,7 @@ export function Admin() {
                       type="number"
                       value={localProductsSold}
                       onChange={(e) => setLocalProductsSold(e.target.value)}
-                      className="flex-1 bg-transparent border-b border-blue-900 text-blue-400 px-2 py-1 font-bold text-xl focus:outline-none focus:border-blue-600 text-center"
+                      className="flex-1 min-w-0 bg-transparent border-b border-blue-900 text-blue-400 px-2 py-1 font-bold text-xl focus:outline-none focus:border-blue-600 text-center"
                     />
                     <span className="text-blue-800">]</span>
                     <button 
@@ -299,13 +304,37 @@ export function Admin() {
                         const val = parseInt(localProductsSold) || 0;
                         updateProductsSold(val);
                       }}
-                      className="ml-2 bg-blue-600 text-black font-bold px-3 py-1 text-xs hover:bg-blue-500 active:translate-y-[1px] active:translate-x-[1px]"
+                      className="ml-2 bg-blue-600 text-black font-bold px-3 py-1 text-xs hover:bg-blue-500 active:translate-y-[1px] active:translate-x-[1px] shrink-0"
                     >
                       UPDATE
                     </button>
                   </div>
                 </div>
-                <p className="text-[10px] text-blue-700 uppercase mt-2">* Update total sold counter manually if required.</p>
+                
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                  <label className="font-bold uppercase text-xs text-blue-600 w-32">Visitors Count:</label>
+                  <div className="flex items-center flex-1 w-full gap-2">
+                    <span className="text-blue-800">[</span>
+                    <input
+                      type="number"
+                      value={localVisitorsCount}
+                      onChange={(e) => setLocalVisitorsCount(e.target.value)}
+                      className="flex-1 min-w-0 bg-transparent border-b border-blue-900 text-blue-400 px-2 py-1 font-bold text-xl focus:outline-none focus:border-blue-600 text-center"
+                    />
+                    <span className="text-blue-800">]</span>
+                    <button 
+                      onClick={() => {
+                        const val = parseInt(localVisitorsCount) || 0;
+                        updateVisitorsCount(val);
+                      }}
+                      className="ml-2 bg-blue-600 text-black font-bold px-3 py-1 text-xs hover:bg-blue-500 active:translate-y-[1px] active:translate-x-[1px] shrink-0"
+                    >
+                      UPDATE
+                    </button>
+                  </div>
+                </div>
+                
+                <p className="text-[10px] text-blue-700 uppercase mt-2">* Update total sold and visitors counters manually if required.</p>
               </div>
             </div>
 

@@ -7,7 +7,8 @@ import {
   setDoc, 
   deleteDoc, 
   updateDoc, 
-  getDocFromServer 
+  getDocFromServer,
+  getDocs
 } from "firebase/firestore";
 import { db, handleFirestoreError, OperationType } from "../firebase";
 
@@ -29,7 +30,9 @@ interface ShopContextType {
   cartTotal: number;
   cartItemCount: number;
   productsSold: number;
+  visitorsCount: number;
   updateProductsSold: (num: number) => Promise<void>;
+  updateVisitorsCount: (num: number) => Promise<void>;
 }
 
 const ShopContext = createContext<ShopContextType | undefined>(undefined);
@@ -38,6 +41,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [productsSold, setProductsSold] = useState<number>(0);
+  const [visitorsCount, setVisitorsCount] = useState<number>(0);
   
   const [cart, setCart] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem("cjp_cart");
@@ -62,6 +66,32 @@ export function ShopProvider({ children }: { children: ReactNode }) {
 
   // Listen to products from Firestore in real-time
   useEffect(() => {
+    const isAdmin = localStorage.getItem("cjp_admin_auth") === "true";
+    if (!isAdmin) {
+      const cached = localStorage.getItem("cjp_products_cache");
+      if (cached) {
+        try {
+          const { timestamp, data } = JSON.parse(cached);
+          if (Date.now() - timestamp < 60 * 60 * 1000) {
+            setProducts(data);
+            return;
+          }
+        } catch (e) {}
+      }
+      
+      getDocs(collection(db, "products"))
+        .then(snapshot => {
+          const prodList: Product[] = [];
+          snapshot.forEach((doc) => prodList.push(doc.data() as Product));
+          prodList.sort((a, b) => b.createdAt - a.createdAt);
+          setProducts(prodList);
+          localStorage.setItem("cjp_products_cache", JSON.stringify({ timestamp: Date.now(), data: prodList }));
+        })
+        .catch(err => handleFirestoreError(err, OperationType.GET, "products"));
+        
+      return; 
+    }
+
     const unsubscribe = onSnapshot(
       collection(db, "products"),
       async (snapshot) => {
@@ -70,8 +100,8 @@ export function ShopProvider({ children }: { children: ReactNode }) {
           prodList.push(doc.data() as Product);
         });
         prodList.sort((a, b) => b.createdAt - a.createdAt);
-
         setProducts(prodList);
+        localStorage.setItem("cjp_products_cache", JSON.stringify({ timestamp: Date.now(), data: prodList }));
       },
       (error) => {
         handleFirestoreError(error, OperationType.GET, "products");
@@ -82,6 +112,9 @@ export function ShopProvider({ children }: { children: ReactNode }) {
 
   // Listen to orders from Firestore in real-time
   useEffect(() => {
+    const isAdmin = localStorage.getItem("cjp_admin_auth") === "true";
+    if (!isAdmin) return;
+
     const unsubscribe = onSnapshot(
       collection(db, "orders"),
       (snapshot) => {
@@ -101,11 +134,42 @@ export function ShopProvider({ children }: { children: ReactNode }) {
 
   // Listen to global stats
   useEffect(() => {
+    const isAdmin = localStorage.getItem("cjp_admin_auth") === "true";
+    if (!isAdmin) {
+      const cached = localStorage.getItem("cjp_stats_cache");
+      if (cached) {
+        try {
+          const { timestamp, productsSold, visitorsCount } = JSON.parse(cached);
+          if (Date.now() - timestamp < 60 * 60 * 1000) {
+            setProductsSold(productsSold || 0);
+            setVisitorsCount(visitorsCount || 0);
+            return;
+          }
+        } catch (e) {}
+      }
+      
+      getDocFromServer(doc(db, "stats", "global"))
+        .then(docSnap => {
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            setProductsSold(data.productsSold || 0);
+            setVisitorsCount(data.visitorsCount || 0);
+            localStorage.setItem("cjp_stats_cache", JSON.stringify({ timestamp: Date.now(), ...data }));
+          }
+        })
+        .catch(err => handleFirestoreError(err, OperationType.GET, "stats/global"));
+        
+      return;
+    }
+
     const unsubscribe = onSnapshot(
       doc(db, "stats", "global"),
       (docSnap) => {
         if (docSnap.exists()) {
-          setProductsSold(docSnap.data().productsSold || 0);
+          const data = docSnap.data();
+          setProductsSold(data.productsSold || 0);
+          setVisitorsCount(data.visitorsCount || 0);
+          localStorage.setItem("cjp_stats_cache", JSON.stringify({ timestamp: Date.now(), ...data }));
         }
       },
       (error) => {
@@ -218,6 +282,14 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const updateVisitorsCount = async (num: number) => {
+    try {
+      await setDoc(doc(db, "stats", "global"), { visitorsCount: num }, { merge: true });
+    } catch (err) {
+      handleFirestoreError(err, OperationType.WRITE, `stats/global`);
+    }
+  };
+
   return (
     <ShopContext.Provider
       value={{
@@ -238,7 +310,9 @@ export function ShopProvider({ children }: { children: ReactNode }) {
         cartTotal,
         cartItemCount,
         productsSold,
+        visitorsCount,
         updateProductsSold,
+        updateVisitorsCount,
       }}
     >
       {children}

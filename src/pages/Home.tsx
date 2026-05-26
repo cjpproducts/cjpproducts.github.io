@@ -4,7 +4,7 @@ import { useShop } from "../context/ShopContext";
 import { ProductCard } from "../components/ProductCard";
 
 export function Home() {
-  const { products, productsSold } = useShop();
+  const { products, productsSold, visitorsCount } = useShop();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<"all" | "t-shirt" | "mobile-cover" | "other">("all");
@@ -40,9 +40,15 @@ export function Home() {
                 </div>
               </div>
               
-              <div className="flex items-center gap-2 text-white font-mono font-bold text-sm md:text-base bg-gray-900 px-3 py-1.5 md:px-4 md:py-2 border border-gray-600 shadow-[2px_2px_0px_#000]">
-                <span>PRODUCTS SOLD: </span>
-                <span className="text-cjp-accent">[{productsSold}]</span>
+              <div className="flex flex-col gap-2 mt-4">
+                <div className="flex items-center gap-2 text-white font-mono font-bold text-sm md:text-base bg-gray-900 px-3 py-1.5 md:px-4 md:py-2 border border-gray-600 shadow-[2px_2px_0px_#000] self-start">
+                  <span>PRODUCTS SOLD: </span>
+                  <span className="text-cjp-accent">[{productsSold}]</span>
+                </div>
+                <div className="flex items-center gap-2 text-white font-mono font-bold text-sm md:text-base bg-gray-900 px-3 py-1.5 md:px-4 md:py-2 border border-gray-600 shadow-[2px_2px_0px_#000] self-start">
+                  <span>VISITORS: </span>
+                  <span className="text-cjp-accent">[{visitorsCount}]</span>
+                </div>
               </div>
             </div>
           </div>
