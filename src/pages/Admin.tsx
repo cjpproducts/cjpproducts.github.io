@@ -288,46 +288,46 @@ export function Admin() {
                 System Stats
               </h2>
               <div className="flex flex-col gap-6 sm:gap-4">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full max-w-full">
-                  <label className="font-bold uppercase text-xs text-blue-600 sm:w-32 shrink-0 max-w-full">Total Products Sold:</label>
-                  <div className="flex items-center w-full sm:flex-1 gap-2 flex-nowrap overflow-hidden">
-                    <span className="text-blue-800 shrink-0">[</span>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full">
+                  <label className="font-bold uppercase text-xs text-blue-600 sm:w-32 shrink-0">Total Products Sold:</label>
+                  <div className="flex items-center gap-1.5 sm:gap-2 flex-nowrap">
+                    <span className="text-blue-800 shrink-0 text-xl font-bold">[</span>
                     <input
                       type="number"
                       value={localProductsSold}
                       onChange={(e) => setLocalProductsSold(e.target.value)}
-                      className="flex-1 min-w-0 w-full bg-transparent border-b border-blue-900 text-blue-400 px-1 sm:px-2 py-1 font-bold text-xl focus:outline-none focus:border-blue-600 text-center"
+                      className="w-20 sm:w-24 bg-transparent border-b border-blue-900 text-blue-400 px-1 py-0.5 font-bold text-xl focus:outline-none focus:border-blue-600 text-center"
                     />
-                    <span className="text-blue-800 shrink-0">]</span>
+                    <span className="text-blue-800 shrink-0 text-xl font-bold">]</span>
                     <button 
                       onClick={() => {
                         const val = parseInt(localProductsSold) || 0;
                         updateProductsSold(val);
                       }}
-                      className="ml-1 sm:ml-2 bg-blue-600 text-black font-bold px-3 py-1 text-xs hover:bg-blue-500 active:translate-y-[1px] active:translate-x-[1px] shrink-0"
+                      className="ml-1 bg-blue-600 text-black font-bold px-3 py-1 text-xs hover:bg-blue-500 active:translate-y-[1px] active:translate-x-[1px] shrink-0"
                     >
                       UPDATE
                     </button>
                   </div>
                 </div>
                 
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full max-w-full">
-                  <label className="font-bold uppercase text-xs text-blue-600 sm:w-32 shrink-0 max-w-full">Visitors Count:</label>
-                  <div className="flex items-center w-full sm:flex-1 gap-2 flex-nowrap overflow-hidden">
-                    <span className="text-blue-800 shrink-0">[</span>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full">
+                  <label className="font-bold uppercase text-xs text-blue-600 sm:w-32 shrink-0">Visitors Count:</label>
+                  <div className="flex items-center gap-1.5 sm:gap-2 flex-nowrap">
+                    <span className="text-blue-800 shrink-0 text-xl font-bold">[</span>
                     <input
                       type="number"
                       value={localVisitorsCount}
                       onChange={(e) => setLocalVisitorsCount(e.target.value)}
-                      className="flex-1 min-w-0 w-full bg-transparent border-b border-blue-900 text-blue-400 px-1 sm:px-2 py-1 font-bold text-xl focus:outline-none focus:border-blue-600 text-center"
+                      className="w-20 sm:w-24 bg-transparent border-b border-blue-900 text-blue-400 px-1 py-0.5 font-bold text-xl focus:outline-none focus:border-blue-600 text-center"
                     />
-                    <span className="text-blue-800 shrink-0">]</span>
+                    <span className="text-blue-800 shrink-0 text-xl font-bold">]</span>
                     <button 
                       onClick={() => {
                         const val = parseInt(localVisitorsCount) || 0;
                         updateVisitorsCount(val);
                       }}
-                      className="ml-1 sm:ml-2 bg-blue-600 text-black font-bold px-3 py-1 text-xs hover:bg-blue-500 active:translate-y-[1px] active:translate-x-[1px] shrink-0"
+                      className="ml-1 bg-blue-600 text-black font-bold px-3 py-1 text-xs hover:bg-blue-500 active:translate-y-[1px] active:translate-x-[1px] shrink-0"
                     >
                       UPDATE
                     </button>
