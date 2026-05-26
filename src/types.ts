@@ -1,4 +1,4 @@
-export type ProductCategory = "t-shirt" | "mobile-cover" | "other";
+export type ProductCategory = "t-shirt" | "mobile-cover" | "books" | "other";
 
 export type Size = "S" | "M" | "L" | "XL" | "XXL";
 

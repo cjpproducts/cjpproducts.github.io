@@ -387,6 +387,7 @@ export function Admin() {
                         <option value="other">Other Category</option>
                         <option value="t-shirt">T-Shirt</option>
                         <option value="mobile-cover">Mobile Cover</option>
+                        <option value="books">Books</option>
                       </select>
                     </div>
                   </div>

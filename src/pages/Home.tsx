@@ -7,7 +7,7 @@ export function Home() {
   const { products, productsSold, visitorsCount } = useShop();
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeCategory, setActiveCategory] = useState<"all" | "t-shirt" | "mobile-cover" | "other">("all");
+  const [activeCategory, setActiveCategory] = useState<"all" | "t-shirt" | "mobile-cover" | "books" | "other">("all");
 
   const filteredProducts = products.filter((product) => {
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -79,7 +79,7 @@ export function Home() {
           </div>
           
           <div className="flex flex-wrap gap-2 md:gap-4 mb-12 uppercase font-bold text-sm sm:text-base">
-            {(["all", "t-shirt", "mobile-cover", "other"] as const).map(cat => (
+            {(["all", "t-shirt", "mobile-cover", "books", "other"] as const).map(cat => (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
@@ -89,10 +89,16 @@ export function Home() {
                     : "bg-white text-cjp-dark border-cjp-dark hover:shadow-[4px_4px_0px_#1a1a1a] hover:translate-y-[-2px] hover:translate-x-[-2px]"
                 }`}
               >
-                {cat === "all" ? "All" : cat === "t-shirt" ? "T-Shirts" : cat === "mobile-cover" ? "Mobile Covers" : "Others"}
+                {cat === "all" ? "All" : cat === "t-shirt" ? "T-Shirts" : cat === "mobile-cover" ? "Mobile Covers" : cat === "books" ? "Books" : "Others"}
               </button>
             ))}
           </div>
+
+          {activeCategory === "books" && (
+            <div id="intellectual-line" className="bg-cjp-dark text-white border-4 border-cjp-accent px-6 py-5 mb-12 text-center uppercase tracking-wide font-display text-2xl md:text-3xl lg:text-4xl shadow-[6px_6px_0px_#ff4500]">
+              “Be intellectual, know politics, know laws.”
+            </div>
+          )}
 
           {filteredProducts.length === 0 ? (
             <div className="bg-white border-4 border-cjp-dark p-12 text-center shadow-[8px_8px_0px_#1a1a1a]">
