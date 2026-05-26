@@ -283,20 +283,20 @@ export function Admin() {
       {activeTab === "inventory" && (
         <div className="grid md:grid-cols-2 gap-12">
           <div className="flex flex-col gap-6">
-            <div className="bg-black text-blue-400 border-2 border-blue-800 p-6 shadow-[8px_8px_0px_#1e3a8a] font-mono">
+            <div className="bg-black text-blue-400 border-2 border-blue-800 p-4 sm:p-6 shadow-[8px_8px_0px_#1e3a8a] font-mono overflow-hidden">
               <h2 className="text-xl font-bold uppercase mb-4 border-b-2 border-dashed border-blue-900 pb-2 flex items-center gap-2">
                 System Stats
               </h2>
               <div className="flex flex-col gap-6 sm:gap-4">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full">
-                  <label className="font-bold uppercase text-xs text-blue-600 sm:w-32 shrink-0">Total Products Sold:</label>
-                  <div className="flex items-center w-full sm:flex-1 gap-2">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full max-w-full">
+                  <label className="font-bold uppercase text-xs text-blue-600 sm:w-32 shrink-0 max-w-full">Total Products Sold:</label>
+                  <div className="flex items-center w-full sm:flex-1 gap-2 flex-nowrap overflow-hidden">
                     <span className="text-blue-800 shrink-0">[</span>
                     <input
                       type="number"
                       value={localProductsSold}
                       onChange={(e) => setLocalProductsSold(e.target.value)}
-                      className="flex-1 min-w-0 bg-transparent border-b border-blue-900 text-blue-400 px-2 py-1 font-bold text-xl focus:outline-none focus:border-blue-600 text-center"
+                      className="flex-1 min-w-0 w-full bg-transparent border-b border-blue-900 text-blue-400 px-1 sm:px-2 py-1 font-bold text-xl focus:outline-none focus:border-blue-600 text-center"
                     />
                     <span className="text-blue-800 shrink-0">]</span>
                     <button 
@@ -311,15 +311,15 @@ export function Admin() {
                   </div>
                 </div>
                 
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full">
-                  <label className="font-bold uppercase text-xs text-blue-600 sm:w-32 shrink-0">Visitors Count:</label>
-                  <div className="flex items-center w-full sm:flex-1 gap-2">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full max-w-full">
+                  <label className="font-bold uppercase text-xs text-blue-600 sm:w-32 shrink-0 max-w-full">Visitors Count:</label>
+                  <div className="flex items-center w-full sm:flex-1 gap-2 flex-nowrap overflow-hidden">
                     <span className="text-blue-800 shrink-0">[</span>
                     <input
                       type="number"
                       value={localVisitorsCount}
                       onChange={(e) => setLocalVisitorsCount(e.target.value)}
-                      className="flex-1 min-w-0 bg-transparent border-b border-blue-900 text-blue-400 px-2 py-1 font-bold text-xl focus:outline-none focus:border-blue-600 text-center"
+                      className="flex-1 min-w-0 w-full bg-transparent border-b border-blue-900 text-blue-400 px-1 sm:px-2 py-1 font-bold text-xl focus:outline-none focus:border-blue-600 text-center"
                     />
                     <span className="text-blue-800 shrink-0">]</span>
                     <button 
@@ -334,12 +334,12 @@ export function Admin() {
                   </div>
                 </div>
                 
-                <p className="text-[10px] text-blue-700 uppercase mt-2 break-words w-full">* Update total sold and visitors counters manually if required.</p>
+                <p className="text-[10px] text-blue-700 uppercase mt-2 break-words w-full max-w-full">* Update total sold and visitors counters manually if required.</p>
               </div>
             </div>
 
             {/* ADD PRODUCT FORM */}
-            <div className="bg-black border-2 border-blue-800 p-6 shadow-[8px_8px_0px_#1e3a8a] text-blue-300">
+            <div className="bg-black border-2 border-blue-800 p-4 sm:p-6 shadow-[8px_8px_0px_#1e3a8a] text-blue-300 overflow-hidden">
           <h2 className="text-xl uppercase font-bold mb-6 flex items-center gap-3 border-b-2 border-dashed border-blue-900 pb-3 text-blue-400">
             <PackagePlus /> Add Product
           </h2>
@@ -561,8 +561,8 @@ export function Admin() {
                       (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=800&auto=format&fit=crop";
                     }}
                   />
-                  <div className="flex-1 flex flex-col justify-center">
-                    <h3 className="font-bold uppercase text-sm leading-tight text-blue-200 line-clamp-1">{product.name}</h3>
+                  <div className="flex-1 flex flex-col justify-center min-w-0">
+                    <h3 className="font-bold uppercase text-sm leading-tight text-blue-200 truncate">{product.name}</h3>
                     <p className="text-blue-500 text-xs mt-1">{formatPrice(product.price)}</p>
                   </div>
                   <button 
@@ -637,8 +637,8 @@ export function Admin() {
                               }}/>
                             </div>
                           )}
-                          <div className="flex-1 flex flex-col justify-center">
-                            <span className="font-bold text-blue-200 uppercase text-sm leading-tight">{item.quantity} x {item.name}</span>
+                          <div className="flex-1 flex flex-col justify-center min-w-0">
+                            <span className="font-bold text-blue-200 uppercase text-sm leading-tight truncate block">{item.quantity} x {item.name}</span>
                             <div className="text-[10px] sm:text-xs text-blue-400 mt-2 flex flex-wrap gap-1 sm:gap-2">
                               {item.selectedSize && <span className="bg-blue-900/50 px-1 border border-blue-800 font-bold">Size: {item.selectedSize}</span>}
                               {item.smartphoneModel && <span className="bg-blue-900/50 px-1 border border-blue-800 font-bold">Model: {item.smartphoneModel}</span>}
