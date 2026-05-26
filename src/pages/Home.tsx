@@ -4,7 +4,7 @@ import { useShop } from "../context/ShopContext";
 import { ProductCard } from "../components/ProductCard";
 
 export function Home() {
-  const { products } = useShop();
+  const { products, productsSold } = useShop();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<"all" | "t-shirt" | "mobile-cover" | "other">("all");
@@ -29,13 +29,20 @@ export function Home() {
             <p className="text-lg md:text-2xl font-bold uppercase tracking-wide text-gray-300 mb-6 md:mb-10 max-w-2xl border-l-4 border-cjp-accent pl-4 md:pl-6">
               The only political movement guaranteed to outlive a nuclear apocalypse. Secure your official merchandise today.
             </p>
-            <div className="flex flex-wrap items-center gap-4 md:gap-6">
-              <a href="#store" className="bg-cjp-accent text-white font-display text-2xl md:text-3xl uppercase px-6 py-3 md:px-10 md:py-5 hover:bg-white hover:text-cjp-accent transition-colors shadow-[4px_4px_0px_#000] md:shadow-[6px_6px_0px_#000] active:translate-y-1 active:translate-x-1 active:shadow-none inline-flex items-center gap-2 md:gap-3">
-                <TrendingUp className="w-5 h-5 md:w-6 md:h-6" /> Shop Now
-              </a>
-              <div className="flex items-center gap-2 text-cjp-accent font-bold text-sm md:text-base bg-black/40 px-3 py-1.5 md:px-4 md:py-2 border-2 border-cjp-accent">
-                <ShieldAlert className="w-4 h-4 md:w-5 md:h-5" />
-                <span>100% Radiation Resistant</span>
+            <div className="flex flex-col items-start gap-4">
+              <div className="flex flex-wrap items-center gap-4 md:gap-6">
+                <a href="#store" className="bg-cjp-accent text-white font-display text-2xl md:text-3xl uppercase px-6 py-3 md:px-10 md:py-5 hover:bg-white hover:text-cjp-accent transition-colors shadow-[4px_4px_0px_#000] md:shadow-[6px_6px_0px_#000] active:translate-y-1 active:translate-x-1 active:shadow-none inline-flex items-center gap-2 md:gap-3">
+                  <TrendingUp className="w-5 h-5 md:w-6 md:h-6" /> Shop Now
+                </a>
+                <div className="flex items-center gap-2 text-cjp-accent font-bold text-sm md:text-base bg-black/40 px-3 py-1.5 md:px-4 md:py-2 border-2 border-cjp-accent">
+                  <ShieldAlert className="w-4 h-4 md:w-5 md:h-5" />
+                  <span>100% Radiation Resistant</span>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-2 text-white font-mono font-bold text-sm md:text-base bg-gray-900 px-3 py-1.5 md:px-4 md:py-2 border border-gray-600 shadow-[2px_2px_0px_#000]">
+                <span>PRODUCTS SOLD: </span>
+                <span className="text-cjp-accent">[{productsSold}]</span>
               </div>
             </div>
           </div>
@@ -43,9 +50,9 @@ export function Home() {
       </section>
 
       {/* STORE SECTION */}
-      <section id="store" className="py-20">
+      <section id="store" className="pt-2 pb-20">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row md:items-end justify-between border-b-4 border-cjp-dark pb-6 mb-8 mt-12 md:mt-0">
+          <div className="flex flex-col md:flex-row md:items-end justify-between border-b-4 border-cjp-dark pb-6 mb-8">
             <div>
               <h2 className="font-display text-5xl md:text-7xl uppercase tracking-tighter">Official Rations</h2>
               <p className="text-gray-600 font-bold uppercase mt-2">Fund the revolution. Buy our stuff.</p>
@@ -101,7 +108,10 @@ export function Home() {
         <div className="container mx-auto px-4 text-center">
           <h2 className="font-display text-4xl uppercase tracking-widest text-[#ff4500] mb-4">Vote Roach</h2>
           <p className="text-gray-400 font-bold uppercase tracking-wider mb-8">We were here before you. We will be here after you.</p>
-          <p className="text-sm text-gray-600">© {new Date().getFullYear()} Cockroach Janta Party. All Rights Reserved. Not a real political party (yet).</p>
+          <p className="text-sm text-gray-600 mb-6">© {new Date().getFullYear()} Cockroach Janta Party. All Rights Reserved. Not a real political party (yet).</p>
+          <p className="text-xs text-gray-500 font-mono font-bold uppercase tracking-wider">
+            Made by <a href="https://polarithweb.github.io" target="_blank" rel="noopener noreferrer" className="text-cjp-accent hover:text-white transition-colors underline decoration-2 underline-offset-2">Polarith Web</a>
+          </p>
         </div>
       </footer>
     </div>

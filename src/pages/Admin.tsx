@@ -5,7 +5,7 @@ import { useShop } from "../context/ShopContext";
 import { formatPrice } from "../lib/utils";
 
 export function Admin() {
-  const { products, addProduct, removeProduct, orders, updateOrderStatus, deleteOrder } = useShop();
+  const { products, addProduct, removeProduct, orders, updateOrderStatus, deleteOrder, productsSold, updateProductsSold } = useShop();
   const [activeTab, setActiveTab] = useState<"inventory" | "orders">("orders");
   
   const [name, setName] = useState("");
@@ -225,52 +225,72 @@ export function Admin() {
     <div className="container mx-auto px-4 py-12 max-w-6xl">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 border-b-4 border-cjp-dark pb-6">
         <div className="flex items-center gap-4">
-          <div className="bg-red-600 text-white p-3 shadow-[4px_4px_0px_#1a1a1a]">
+          <div className="bg-black text-green-500 p-3 shadow-[4px_4px_0px_#1a1a1a] border border-green-500">
             <AlertOctagon size={40} />
           </div>
           <div>
-            <h1 className="font-display text-4xl uppercase tracking-tight">Party War Room</h1>
-            <div className="flex items-center gap-3 mt-1">
-              <span className="text-gray-600 font-bold uppercase text-xs">Authorized Personnel Only</span>
-              <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-ping"></span>
-              <span className="text-xs text-green-700 font-bold uppercase">Terminal Online</span>
+            <h1 className="font-mono text-3xl font-bold uppercase tracking-tight text-gray-900 border-b-4 border-black inline-block pb-1 pr-4">SYS&gt; ADMIN_TERMINAL</h1>
+            <div className="flex items-center gap-3 mt-3">
+              <span className="font-mono text-gray-600 font-bold uppercase text-xs px-2 py-0.5 bg-gray-200 border border-gray-400">AUTH: OMEGA</span>
+              <span className="text-xs text-green-700 font-bold uppercase font-mono flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse block"></span>
+                SYSTEM ACTIVE
+              </span>
             </div>
           </div>
         </div>
         
         <div className="flex flex-wrap items-center gap-4">
-          <div className="flex border-2 border-cjp-dark bg-gray-200 p-1">
+          <div className="flex border-2 border-black bg-gray-100 p-1">
             <button
               onClick={() => setActiveTab("orders")}
-              className={`px-6 py-2 font-bold uppercase text-xs cursor-pointer transition-colors ${
-                activeTab === "orders" ? "bg-cjp-dark text-white" : "hover:bg-gray-300 text-gray-700"
+              className={`px-6 py-2 font-mono font-bold uppercase text-xs cursor-pointer transition-colors ${
+                activeTab === "orders" ? "bg-black text-green-400 shadow-[2px_2px_0px_#4ade80]" : "hover:bg-gray-200 text-gray-700"
               }`}
             >
-              Manage Orders
+              [ Manage Orders ]
             </button>
             <button
               onClick={() => setActiveTab("inventory")}
-              className={`px-6 py-2 font-bold uppercase text-xs cursor-pointer transition-colors ${
-                activeTab === "inventory" ? "bg-cjp-dark text-white" : "hover:bg-gray-300 text-gray-700"
+              className={`px-6 py-2 font-mono font-bold uppercase text-xs cursor-pointer transition-colors ${
+                activeTab === "inventory" ? "bg-black text-green-400 shadow-[2px_2px_0px_#4ade80]" : "hover:bg-gray-200 text-gray-700"
               }`}
             >
-              Inventory Control
+              [ Inventory Control ]
             </button>
           </div>
           
           <button
             onClick={handleLogout}
-            className="bg-red-600 text-white border-2 border-cjp-dark font-bold uppercase px-4 py-2 text-xs shadow-[2px_2px_0px_#000] hover:bg-cjp-dark hover:text-white transition-colors cursor-pointer"
+            className="bg-red-600 text-white font-mono border-2 border-black font-bold uppercase px-4 py-2 text-xs shadow-[2px_2px_0px_#000] hover:bg-black transition-colors cursor-pointer"
           >
-            Secure Lockout
+            END_SESSION
           </button>
         </div>
       </div>
 
       {activeTab === "inventory" && (
         <div className="grid md:grid-cols-2 gap-12">
-          {/* ADD PRODUCT FORM */}
-        <div className="bg-white border-4 border-cjp-dark p-6 shadow-[8px_8px_0px_#ff4500]">
+          <div className="flex flex-col gap-6">
+            <div className="bg-white border-4 border-cjp-dark p-6 shadow-[8px_8px_0px_#1a1a1a]">
+              <h2 className="font-mono text-xl font-bold uppercase mb-4 text-gray-900 border-b-2 border-dashed border-gray-400 pb-2">
+                &gt; SYSTEM_STATS
+              </h2>
+              <div className="flex items-end gap-4">
+                <div className="flex-1">
+                  <label className="font-bold uppercase text-xs block text-gray-600 mb-1">Total Rations Sold</label>
+                  <input
+                    type="number"
+                    value={productsSold}
+                    onChange={(e) => updateProductsSold(parseInt(e.target.value) || 0)}
+                    className="w-full border-2 border-black bg-gray-50 px-4 py-2 font-mono font-bold text-xl focus:outline-none focus:bg-white focus:ring-2 focus:ring-green-400 text-cjp-dark"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* ADD PRODUCT FORM */}
+            <div className="bg-white border-4 border-cjp-dark p-6 shadow-[8px_8px_0px_#ff4500]">
           <h2 className="font-display text-3xl uppercase mb-6 flex items-center gap-2 border-b-2 border-dashed border-gray-300 pb-3">
             <PackagePlus /> Issue New Ration
           </h2>
@@ -455,6 +475,7 @@ export function Admin() {
             </button>
           </form>
         </div>
+        </div>
 
         {/* INVENTORY LIST */}
         <div className="space-y-6">
@@ -508,102 +529,117 @@ export function Admin() {
       )}
 
       {activeTab === "orders" && (
-        <div className="bg-white border-4 border-cjp-dark p-6 shadow-[8px_8px_0px_#ff4500]">
-          <h2 className="font-display text-3xl uppercase mb-6 flex items-center gap-3 border-b-2 border-dashed border-gray-300 pb-3">
-            <ClipboardList /> Received Orders
+        <div className="bg-white border-2 border-black p-6 shadow-[8px_8px_0px_#1a1a1a]">
+          <h2 className="font-mono text-2xl font-bold uppercase mb-6 flex items-center gap-3 border-b-2 border-dashed border-gray-400 pb-3">
+            <ClipboardList /> &gt; FETCH_ORDERS_LOG
           </h2>
           
           <div className="space-y-6">
             {orders.length === 0 ? (
-              <div className="text-center py-10 opacity-60">
+              <div className="text-center py-10 opacity-60 font-mono">
                 <ClipboardList size={48} className="mx-auto mb-4" />
-                <p className="font-display text-2xl uppercase">No orders received yet.</p>
-                <p className="font-bold text-gray-500">Wait for the citizens to comply.</p>
+                <p className="text-xl uppercase font-bold">Query returned 0 results.</p>
+                <p className="font-bold text-gray-500">Wait for citizens to comply.</p>
               </div>
             ) : (
               orders.map((order) => (
-                <div key={order.id} className="border-2 border-cjp-dark p-4 flex flex-col md:flex-row gap-6">
-                  <div className="flex-1 space-y-3">
-                    <div className="flex items-center gap-3">
-                      <h3 className="font-display text-2xl bg-cjp-dark text-white px-3 py-1 uppercase">{order.id}</h3>
-                      <span className="text-sm font-bold text-gray-500">
-                        {new Date(order.date).toLocaleString()}
-                      </span>
+                <div key={order.id} className="border border-gray-400 bg-gray-50 flex flex-col md:flex-row shadow-[4px_4px_0px_#1a1a1a]">
+                  <div className="flex-1 p-5">
+                    <div className="flex justify-between items-center border-b-2 border-gray-300 pb-2 mb-4">
+                      <div className="flex items-center gap-3">
+                        <span className="font-mono bg-black text-green-400 px-2 py-0.5 text-xs">ID: {order.id.slice(0, 10)}...</span>
+                        <span className="font-mono text-xs font-bold text-gray-500">
+                          TS: {new Date(order.date).toLocaleString()}
+                        </span>
+                      </div>
+                      <span className="font-mono font-bold text-lg text-cjp-dark">{formatPrice(order.total)}</span>
                     </div>
                     
-                    <div className="bg-gray-100 p-3 text-sm font-bold border border-gray-300">
-                      <p className="text-cjp-dark uppercase mb-1">Citizen Record:</p>
-                      <ul className="text-gray-700">
-                        <li>Name: {order.customerInfo?.name || "Unknown"}</li>
-                        <li>Phone: {order.customerInfo?.phone || "Unknown"}</li>
-                        {order.customerInfo?.whatsapp && <li>WhatsApp: {order.customerInfo.whatsapp}</li>}
-                        <li>Address: {order.customerInfo?.address || "Unknown"}</li>
-                        <li>PIN: {order.customerInfo?.pincode || "Unknown"}</li>
-                        <li className="uppercase mt-1 text-cjp-accent border-t mt-2 pt-1 border-gray-300">
-                          Payment: {order.customerInfo?.paymentMethod === 'cod' ? 'Cash On Delivery' : 'Prepaid'}
+                    <div className="bg-black p-4 text-xs font-mono border border-green-500 text-green-400 shadow-[inset_0_0_10px_rgba(0,255,0,0.1)] mb-4">
+                      <p className="text-white uppercase mb-2 border-b border-green-900 pb-1">&gt; CUSTOMER_DATA</p>
+                      <ul className="space-y-1">
+                        <li><span className="text-gray-400">NAME:</span> {order.customerInfo?.name || "Unknown"}</li>
+                        <li><span className="text-gray-400">PHON:</span> {order.customerInfo?.phone || "Unknown"}</li>
+                        {order.customerInfo?.whatsapp && <li><span className="text-gray-400">WAPP:</span> {order.customerInfo.whatsapp}</li>}
+                        <li><span className="text-gray-400">ADDR:</span> {order.customerInfo?.address || "Unknown"}</li>
+                        <li><span className="text-gray-400">ZCODE:</span> {order.customerInfo?.pincode || "Unknown"}</li>
+                        <li className="uppercase mt-2 text-yellow-400 border-t border-green-900 pt-2">
+                          PAY: {order.customerInfo?.paymentMethod === 'cod' ? 'CASH ON DELIVERY' : 'PREPAID'}
                         </li>
-                        <li className={`uppercase mt-1 text-xs border-t pt-1 border-gray-300 ${order.customerInfo?.easyReturnEnabled ? 'text-green-600' : 'text-gray-400'}`}>
-                          Easy Return/Exchange: {order.customerInfo?.easyReturnEnabled ? 'ENABLED (+29 RS)' : 'DISABLED'}
+                        <li className={`uppercase mt-1 border-t border-green-900 pt-1 ${order.customerInfo?.easyReturnEnabled ? 'text-white' : 'text-gray-500'}`}>
+                          RTN_POLICY: {order.customerInfo?.easyReturnEnabled ? 'ENABLED (+29 RS)' : 'DISABLED'}
                         </li>
                       </ul>
                     </div>
 
-                    <ul className="space-y-1 pl-4 border-l-4 border-gray-200">
+                    <p className="font-mono text-xs font-bold uppercase border-b-2 border-dashed border-gray-400 pb-1 mb-2">&gt; ITEMS_MANIFEST</p>
+                    <ul className="space-y-2 font-mono">
                       {order.items.map((item, idx) => (
-                        <li key={idx} className="font-bold uppercase text-sm">
-                          {item.quantity}x {item.name} 
-                          {item.selectedSize && <span className="ml-1 text-xs text-gray-500">[Size: {item.selectedSize}]</span>}
-                          {item.smartphoneModel && <span className="ml-1 text-xs text-gray-500">[Model: {item.smartphoneModel}]</span>}
-                          <span className="text-gray-500 ml-1">({formatPrice(item.cartPrice)})</span>
+                        <li key={idx} className="flex gap-4 text-sm bg-white border border-gray-300 p-2 shadow-sm">
+                          {item.imageUrl && (
+                            <div className="shrink-0">
+                              <img src={item.imageUrl} alt={item.name} className="w-16 h-16 object-cover border border-gray-400" onError={(e) => {
+                                  (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=800&auto=format&fit=crop";
+                              }}/>
+                            </div>
+                          )}
+                          <div className="flex-1 flex flex-col justify-center">
+                            <span className="font-bold text-gray-900 uppercase text-sm leading-tight">{item.quantity} x {item.name}</span>
+                            <div className="text-[10px] sm:text-xs text-gray-600 mt-2 flex flex-wrap gap-1 sm:gap-2">
+                              {item.selectedSize && <span className="bg-gray-200 px-1 border border-gray-400 font-bold">SZ:{item.selectedSize}</span>}
+                              {item.smartphoneModel && <span className="bg-gray-200 px-1 border border-gray-400 font-bold">MDL:{item.smartphoneModel}</span>}
+                              <span className="bg-gray-200 px-1 border border-gray-400 font-bold">PRC:{formatPrice(item.cartPrice)}</span>
+                            </div>
+                          </div>
                         </li>
                       ))}
                     </ul>
-                    <div className="font-display text-xl pt-2 flex justify-between items-end">
-                      <div>Total: <span className="text-cjp-accent">{formatPrice(order.total)}</span></div>
+                    
+                    <div className="mt-4 flex justify-end border-t-2 border-gray-300 pt-4">
                       <button 
                         onClick={() => {
-                          if (window.confirm("Delete this order permanently to free up storage space?")) {
+                          if (window.confirm("PURGE THIS ORDER FROM SYSTEM MEMORY?")) {
                             deleteOrder(order.id);
                           }
                         }}
-                        className="flex items-center gap-2 px-3 py-1 bg-red-50 text-red-600 border border-red-200 hover:bg-red-600 hover:text-white transition-colors text-xs uppercase font-bold"
+                        className="flex items-center gap-2 px-3 py-1 bg-red-100 text-red-700 border border-red-300 hover:bg-red-600 hover:text-white transition-colors text-xs uppercase font-bold font-mono"
                       >
-                        <Trash2 size={14} /> Delete Order
+                        <Trash2 size={14} /> PURGE_RECORD
                       </button>
                     </div>
                   </div>
                   
-                  <div className="flex flex-col gap-2 min-w-[200px] border-t-2 md:border-t-0 md:border-l-2 border-dashed border-gray-300 pt-4 md:pt-0 md:pl-6">
-                    <p className="font-bold uppercase text-sm text-gray-500 mb-1">Fulfillment Status</p>
+                  <div className="bg-gray-200 flex flex-col gap-2 min-w-[200px] border-t border-gray-400 md:border-t-0 md:border-l p-5">
+                    <p className="font-bold font-mono uppercase text-xs text-gray-600 mb-1 border-b border-gray-300 pb-2">Status_UPDATE()</p>
                     <button 
                       onClick={() => updateOrderStatus(order.id, 'pending')}
-                      className={`flex items-center gap-2 p-2 font-bold uppercase text-sm border-2 transition-colors ${
+                      className={`flex items-center gap-2 p-2 font-bold font-mono uppercase text-xs border transition-colors ${
                         order.status === 'pending' 
-                          ? 'bg-yellow-100 border-yellow-500 text-yellow-800' 
-                          : 'border-transparent hover:bg-gray-100'
+                          ? 'bg-yellow-300 border-yellow-600 text-yellow-900 shadow-[2px_2px_0px_#a16207]' 
+                          : 'bg-white border-gray-400 hover:bg-gray-100 text-gray-700'
                       }`}
                     >
-                      <Clock size={16} /> Pending
+                      <Clock size={14} /> PENDING
                     </button>
                     <button 
                       onClick={() => updateOrderStatus(order.id, 'shipped')}
-                      className={`flex items-center gap-2 p-2 font-bold uppercase text-sm border-2 transition-colors ${
+                      className={`flex items-center gap-2 p-2 font-bold font-mono uppercase text-xs border transition-colors ${
                         order.status === 'shipped' 
-                          ? 'bg-blue-100 border-blue-500 text-blue-800' 
-                          : 'border-transparent hover:bg-gray-100'
+                          ? 'bg-blue-300 border-blue-600 text-blue-900 shadow-[2px_2px_0px_#1d4ed8]' 
+                          : 'bg-white border-gray-400 hover:bg-gray-100 text-gray-700'
                       }`}
                     >
-                      <Truck size={16} /> Shipped
+                      <Truck size={14} /> SHIPPED
                     </button>
                     <button 
                       onClick={() => updateOrderStatus(order.id, 'delivered')}
-                      className={`flex items-center gap-2 p-2 font-bold uppercase text-sm border-2 transition-colors ${
+                      className={`flex items-center gap-2 p-2 font-bold font-mono uppercase text-xs border transition-colors ${
                         order.status === 'delivered' 
-                          ? 'bg-green-100 border-green-500 text-green-800' 
-                          : 'border-transparent hover:bg-gray-100'
+                          ? 'bg-green-300 border-green-600 text-green-900 shadow-[2px_2px_0px_#166534]' 
+                          : 'bg-white border-gray-400 hover:bg-gray-100 text-gray-700'
                       }`}
                     >
-                      <CheckCircle2 size={16} /> Delivered
+                      <CheckCircle2 size={14} /> DELIVERED
                     </button>
                   </div>
                 </div>

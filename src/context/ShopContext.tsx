@@ -28,6 +28,8 @@ interface ShopContextType {
   deleteOrder: (orderId: string) => Promise<void>;
   cartTotal: number;
   cartItemCount: number;
+  productsSold: number;
+  updateProductsSold: (num: number) => Promise<void>;
 }
 
 const ShopContext = createContext<ShopContextType | undefined>(undefined);
@@ -35,6 +37,7 @@ const ShopContext = createContext<ShopContextType | undefined>(undefined);
 export function ShopProvider({ children }: { children: ReactNode }) {
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [productsSold, setProductsSold] = useState<number>(0);
   
   const [cart, setCart] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem("cjp_cart");
@@ -91,6 +94,22 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       },
       (error) => {
         handleFirestoreError(error, OperationType.GET, "orders");
+      }
+    );
+    return () => unsubscribe();
+  }, []);
+
+  // Listen to global stats
+  useEffect(() => {
+    const unsubscribe = onSnapshot(
+      doc(db, "stats", "global"),
+      (docSnap) => {
+        if (docSnap.exists()) {
+          setProductsSold(docSnap.data().productsSold || 0);
+        }
+      },
+      (error) => {
+        handleFirestoreError(error, OperationType.GET, "stats/global");
       }
     );
     return () => unsubscribe();
@@ -191,6 +210,14 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const updateProductsSold = async (num: number) => {
+    try {
+      await setDoc(doc(db, "stats", "global"), { productsSold: num }, { merge: true });
+    } catch (err) {
+      handleFirestoreError(err, OperationType.WRITE, `stats/global`);
+    }
+  };
+
   return (
     <ShopContext.Provider
       value={{
@@ -210,6 +237,8 @@ export function ShopProvider({ children }: { children: ReactNode }) {
         deleteOrder,
         cartTotal,
         cartItemCount,
+        productsSold,
+        updateProductsSold,
       }}
     >
       {children}
