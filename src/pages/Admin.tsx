@@ -16,6 +16,8 @@ export function Admin() {
   const [description, setDescription] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [dragActive, setDragActive] = useState(false);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [deleteOrderConfirmId, setDeleteOrderConfirmId] = useState<string | null>(null);
 
   // Authentication System
   const [password, setPassword] = useState("");
@@ -95,7 +97,7 @@ export function Admin() {
 
   const handleImageFile = (file: File) => {
     if (!file.type.startsWith("image/")) {
-      alert("Please upload an image file (PNG, JPG, WEBP, GIF etc.)");
+      setSubmitError("Please upload a valid image file (PNG, JPG, WEBP, GIF etc.)");
       return;
     }
     const reader = new FileReader();
@@ -642,14 +644,27 @@ export function Admin() {
                         </button>
                         <button 
                           onClick={() => {
-                            if (window.confirm(`Discontinue item: "${product.name}"?`)) {
+                            if (deleteConfirmId === product.id) {
                               removeProduct(product.id);
+                              setDeleteConfirmId(null);
+                            } else {
+                              setDeleteConfirmId(product.id);
+                              // Auto-reset after 3 seconds
+                              setTimeout(() => setDeleteConfirmId(null), 3500);
                             }
                           }}
-                          className="p-2 sm:p-2.5 bg-red-950/30 flex items-center justify-center text-red-500 hover:bg-red-600 hover:text-white transition-colors cursor-pointer border border-red-950 hover:border-red-750 rounded-sm"
-                          title="Remove product"
+                          className={`p-2 sm:p-2.5 flex items-center justify-center transition-colors cursor-pointer border rounded-sm ${
+                            deleteConfirmId === product.id
+                              ? "bg-red-600 text-white border-red-500 animate-pulse text-xs font-bold px-2 py-1"
+                              : "bg-red-950/30 text-red-500 border-red-950 hover:bg-red-600 hover:text-white hover:border-red-750"
+                          }`}
+                          title={deleteConfirmId === product.id ? "Click again to confirm delete" : "Remove product"}
                         >
-                          <Trash2 size={16} />
+                          {deleteConfirmId === product.id ? (
+                            <span className="text-[10px] uppercase font-mono font-bold">Confirm?</span>
+                          ) : (
+                            <Trash2 size={16} />
+                          )}
                         </button>
                       </div>
                     </div>
@@ -774,16 +789,24 @@ export function Admin() {
                       </ul>
                       
                       {/* Delete actions */}
-                      <div className="mt-4 flex justify-end border-t border-blue-950  pt-3">
+                      <div className="mt-4 flex justify-end border-t border-blue-950 pt-3">
                         <button 
                           onClick={() => {
-                            if (window.confirm("Permanently purge this order item from system logs?")) {
+                            if (deleteOrderConfirmId === order.id) {
                               deleteOrder(order.id);
+                              setDeleteOrderConfirmId(null);
+                            } else {
+                              setDeleteOrderConfirmId(order.id);
+                              setTimeout(() => setDeleteOrderConfirmId(null), 3500);
                             }
                           }}
-                          className="flex items-center gap-1.5 px-3 py-1.5 bg-red-950/20 text-red-500 border border-red-950/50 hover:bg-red-600 hover:text-white transition-colors text-[10px] uppercase font-mono font-bold cursor-pointer rounded-sm"
+                          className={`flex items-center gap-1.5 px-3 py-1.5 transition-colors text-[10px] uppercase font-mono font-bold cursor-pointer rounded-sm border ${
+                            deleteOrderConfirmId === order.id
+                              ? "bg-red-600 text-white border-red-500 animate-pulse font-sans"
+                              : "bg-red-950/20 text-red-500 border-red-950/50 hover:bg-red-600 hover:text-white"
+                          }`}
                         >
-                          <Trash2 size={12} /> Delete Order Log
+                          <Trash2 size={12} /> {deleteOrderConfirmId === order.id ? "[ Click Again to Clear Log ]" : "Delete Order Log"}
                         </button>
                       </div>
                     </div>

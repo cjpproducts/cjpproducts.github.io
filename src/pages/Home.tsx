@@ -8,17 +8,6 @@ export function Home() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<"all" | "t-shirt" | "mobile-cover" | "books" | "other">("all");
-  const [shuffledIds, setShuffledIds] = useState<string[]>([]);
-
-  useEffect(() => {
-    setShuffledIds(prev => {
-      const newIds = products.map(p => p.id).filter(id => !prev.includes(id));
-      if (newIds.length > 0) {
-        return [...prev, ...newIds].sort(() => Math.random() - 0.5);
-      }
-      return prev;
-    });
-  }, [products]);
 
   const filteredProducts = useMemo(() => {
     const filtered = products.filter((product) => {
@@ -28,16 +17,26 @@ export function Home() {
       return matchesSearch && matchesCategory;
     });
 
-    if (activeCategory === "all" && shuffledIds.length > 0) {
-      filtered.sort((a, b) => {
-        const indexA = shuffledIds.indexOf(a.id);
-        const indexB = shuffledIds.indexOf(b.id);
-        return (indexA !== -1 ? indexA : Infinity) - (indexB !== -1 ? indexB : Infinity);
-      });
-    }
+    // Sort products by category: t-shirt -> mobile-cover -> other -> books, then by newest first
+    const categoryOrder: Record<string, number> = {
+      "t-shirt": 1,
+      "mobile-cover": 2,
+      "other": 3,
+      "books": 4,
+    };
+
+    filtered.sort((a, b) => {
+      const orderA = categoryOrder[a.category] || 99;
+      const orderB = categoryOrder[b.category] || 99;
+      
+      if (orderA !== orderB) {
+        return orderA - orderB;
+      }
+      return b.createdAt - a.createdAt;
+    });
 
     return filtered;
-  }, [products, searchQuery, activeCategory, shuffledIds]);
+  }, [products, searchQuery, activeCategory]);
 
   return (
     <div>

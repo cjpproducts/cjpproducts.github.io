@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useShop } from "../context/ShopContext";
 import { Product, Size } from "../types";
 import { formatPrice } from "../lib/utils";
-import { ShoppingCart, ArrowLeft, Share2, Link as LinkIcon, Check } from "lucide-react";
+import { ShoppingCart, ArrowLeft, Share2, Link as LinkIcon, Check, AlertOctagon } from "lucide-react";
 import { ProductCard } from "../components/ProductCard";
 import { motion } from "motion/react";
 
@@ -15,6 +15,7 @@ export function ProductDetail() {
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [selectedSize, setSelectedSize] = useState<Size | "">("");
   const [smartphoneModel, setSmartphoneModel] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const [copiedProduct, setCopiedProduct] = useState(false);
   const [copiedSite, setCopiedSite] = useState(false);
 
@@ -146,14 +147,15 @@ export function ProductDetail() {
 
   const handleAdd = () => {
     if (product.category === "t-shirt" && !selectedSize) {
-      alert("Please select a size first.");
+      setError("Please select a size first.");
       return;
     }
     if (product.category === "mobile-cover" && !smartphoneModel.trim()) {
-      alert("Please enter your smartphone model.");
+      setError("Please enter your smartphone model.");
       return;
     }
     
+    setError(null);
     const cartItemId = `${product.id}-${selectedSize || 'none'}-${smartphoneModel.trim() || 'none'}`;
     addToCart({
       ...product,
@@ -273,6 +275,13 @@ export function ProductDetail() {
                   className="w-full border-2 border-cjp-dark bg-white px-4 py-4 text-lg focus:outline-none focus:ring-4 focus:ring-cjp-accent/30 font-bold"
                 />
                 <p className="text-xs font-bold text-gray-500 mt-2 uppercase">Please enter the exact model name</p>
+              </div>
+            )}
+
+            {error && (
+              <div className="bg-red-50 text-red-650 border-2 border-red-500 p-4 font-bold uppercase text-xs flex items-center gap-3">
+                <AlertOctagon className="shrink-0 animate-pulse text-red-650" size={20} />
+                <span>{error}</span>
               </div>
             )}
 

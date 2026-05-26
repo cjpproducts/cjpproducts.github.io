@@ -20,8 +20,6 @@ export function Cart() {
   const [errorMessage, setErrorMessage] = useState("");
   const [orderSuccess, setOrderSuccess] = useState(false);
 
-  if (!isCartOpen) return null;
-
   const finalTotal = cartTotal + (easyReturn ? 29 : 0);
 
   const handleCheckoutSubmit = async (e: React.FormEvent) => {

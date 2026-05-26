@@ -11,6 +11,7 @@ export function ProductCard({ product }: { product: Product; key?: string }) {
 
   const [selectedSize, setSelectedSize] = useState<Size | "">("");
   const [smartphoneModel, setSmartphoneModel] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   const pricesObj = product.tShirtPrices || {};
   const availableSizes = Object.entries(pricesObj)
@@ -24,14 +25,17 @@ export function ProductCard({ product }: { product: Product; key?: string }) {
 
   const handleAdd = () => {
     if (product.category === "t-shirt" && !selectedSize) {
-      alert("Please select a size first.");
+      setError("Please select a size first.");
+      setTimeout(() => setError(null), 3000);
       return;
     }
     if (product.category === "mobile-cover" && !smartphoneModel.trim()) {
-      alert("Please enter your smartphone model.");
+      setError("Please enter your model.");
+      setTimeout(() => setError(null), 3000);
       return;
     }
     
+    setError(null);
     const cartItemId = `${product.id}-${selectedSize || 'none'}-${smartphoneModel.trim() || 'none'}`;
     addToCart({
       ...product,
@@ -92,6 +96,12 @@ export function ProductCard({ product }: { product: Product; key?: string }) {
               placeholder="e.g. iPhone 15 Pro Max"
               className="w-full border-2 border-gray-300 px-3 py-2 text-sm focus:outline-none focus:border-cjp-dark"
             />
+          </div>
+        )}
+
+        {error && (
+          <div className="mb-3 text-[10px] font-bold text-red-600 uppercase tracking-wider bg-red-50 border border-red-200 px-2.5 py-1 flex items-center gap-1.5 rounded-sm">
+            ⚠️ <span>{error}</span>
           </div>
         )}
 
