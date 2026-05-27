@@ -81,7 +81,14 @@ export function Admin() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !price || !description) return;
+    
+    // Validation
+    if (!name || !description) return;
+    if (category !== "t-shirt" && !price) return;
+    if (category === "t-shirt" && Object.entries(tShirtPrices).every(([_, v]) => !v)) {
+      setSubmitError("Please fill at least one size price for the T-Shirt.");
+      return;
+    }
 
     setIsSubmitting(true);
     setSubmitError("");
