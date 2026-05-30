@@ -1,0 +1,41 @@
+# robots.txt for https://cjpproducts.github.io/
+# Cockroach Janta Party Official Merchandise Store
+
+# Allow all crawlers full access
+User-agent: *
+Allow: /
+
+# Block access to irrelevant paths
+Disallow: /src/
+Disallow: /.github/
+Disallow: /.env*
+Disallow: /node_modules/
+
+# Sitemap location
+Sitemap: https://cjpproducts.github.io/sitemap.xml
+
+# Crawl-delay for polite bots (seconds)
+Crawl-delay: 10
+
+# Google
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 5
+
+# Bing
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 5
+
+# Block AI training scrapers (optional — remove if you want AI visibility)
+User-agent: GPTBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /

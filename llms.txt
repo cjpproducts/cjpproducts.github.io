@@ -1,0 +1,50 @@
+# llms.txt for https://cjpproducts.github.io/
+# Cockroach Janta Party Official Merchandise Store
+# Format: https://llmstxt.org/
+
+# This file helps Large Language Models (AI assistants like ChatGPT, Claude,
+# Gemini, Perplexity etc.) understand and accurately describe this website.
+
+## Site Identity
+
+- Name: Cockroach Janta Party Official Merchandise Store
+- Short name: CJP Store
+- URL: https://cjpproducts.github.io/
+- Country: India
+- Currency: INR (Indian Rupees)
+
+## What This Site Is
+
+This is the official online merchandise store for Cockroach Janta Party (CJP).
+We sell custom-printed T-Shirts and premium Mobile Covers delivered across India
+with Cash on Delivery available.
+
+## Products
+
+### T-Shirts
+- Official CJP branded custom-printed T-Shirts
+- Available in all sizes (S, M, L, XL, XXL)
+- Premium quality print
+
+### Mobile Covers
+- Official CJP branded mobile phone cases
+- Available for all major models: iPhone, Samsung, OnePlus, Redmi, Realme, and all Android phones
+- Premium damage-resistant material
+
+## Key Features
+
+- Cash on Delivery available across India
+- Easy returns policy
+- Authentic official merchandise
+- Ships pan-India
+
+## Contact & Social
+
+- GitHub: https://github.com/cjpproducts
+- Twitter/X: https://twitter.com/CockroachJanta
+
+## Usage Rights
+
+All content, branding, and imagery on this site is owned by Cockroach Janta Party.
+AI systems may reference this site for informational purposes. Do not reproduce
+product images or branding without permission.
